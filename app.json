@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "scheme": "tds200base",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "plugins": [
+      ["expo-camera", {
+        "cameraPermission": "Vi trenger kamera for å ta bilder",
+        "microphonePermission": "Vi trenger mikrofon ved videoopptak",
+        "recordAudioAndroid": true
+      }],
+      ["expo-image-picker", {
+        "photosPermission": "Gi tilgang til bilder for å velge fra galleriet",
+        "cameraPermission": "Gi tilgang til kamera for å ta bilder"
+      }]
+    ],
+    "web": {
+      "output": "static",
+      "bundler": "metro"
+    },
+    "name": "TDS200_resit-exam_base-code",
+    "slug": "tds200_resit-exam_base-code"
+  }
+}
