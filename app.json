@@ -19,6 +19,13 @@
           "cameraPermission": "Gi tilgang til kamera for å ta bilder"
         }
       ],
+      [
+        "expo-location", 
+        {
+          "locationWhenInUsePermission": "Tillat posisjon for å vise nærmeste oppgaver",
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
       "expo-web-browser"
     ],
     "web": {
