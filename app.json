@@ -4,15 +4,22 @@
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "plugins": [
-      ["expo-camera", {
-        "cameraPermission": "Vi trenger kamera for å ta bilder",
-        "microphonePermission": "Vi trenger mikrofon ved videoopptak",
-        "recordAudioAndroid": true
-      }],
-      ["expo-image-picker", {
-        "photosPermission": "Gi tilgang til bilder for å velge fra galleriet",
-        "cameraPermission": "Gi tilgang til kamera for å ta bilder"
-      }]
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Vi trenger kamera for å ta bilder",
+          "microphonePermission": "Vi trenger mikrofon ved videoopptak",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Gi tilgang til bilder for å velge fra galleriet",
+          "cameraPermission": "Gi tilgang til kamera for å ta bilder"
+        }
+      ],
+      "expo-web-browser"
     ],
     "web": {
       "output": "static",
