@@ -3,11 +3,17 @@ import { Slot } from "expo-router";
 import { View } from "react-native";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AuthSessionProvider, useAuthContext } from "@/providers/authContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function Layout() {
   return (
-    <View className="flex flex-1 bg-white">
-      <Slot />
-    </View>
+    <SafeAreaProvider>
+      <AuthSessionProvider>
+        <View className="flex flex-1 bg-white">
+          <Slot />
+        </View>
+      </AuthSessionProvider>
+    </SafeAreaProvider>
   );
 }
