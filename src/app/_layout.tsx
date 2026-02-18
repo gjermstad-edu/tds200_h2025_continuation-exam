@@ -1,8 +1,8 @@
 import "../global.css";
 import { Slot } from "expo-router";
 import { View } from "react-native";
+import Toast from "react-native-toast-message";
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthSessionProvider, useAuthContext } from "@/providers/authContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -10,8 +10,9 @@ export default function Layout() {
   return (
     <SafeAreaProvider>
       <AuthSessionProvider>
-        <View className="flex flex-1 bg-white">
+        <View className="flex-1 w-full h-full bg-white">
           <Slot />
+          <Toast />
         </View>
       </AuthSessionProvider>
     </SafeAreaProvider>
