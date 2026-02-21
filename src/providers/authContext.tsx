@@ -77,25 +77,34 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
     UserProfile | null | undefined
   >(null);
 
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const router = useRouter();
 
   // Sjekker om logget inn i context
   useEffect(() => {
     setIsAuthLoading(true);
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setFirebaseUser(user ?? null);
 
-      // Fjerner profilen når brukeren logger ut
-      if (!user) {
-        setUserProfile(null);
-        setIsProfileLoading(false);
-        return;
-      }
+    const unsubscribeAuth = onAuthStateChanged(
+      auth,
+      (user) => {
+        setFirebaseUser(user ?? null);
 
-      setIsAuthLoading(false);
-    });
+        // Fjerner profilen når brukeren logger ut
+        if (!user) {
+          setUserProfile(null);
+          setIsProfileLoading(false);
+        }
+
+        setIsAuthLoading(false);
+      },
+      (error) => {
+        console.error(
+          `🚨 ERROR error: ${error} [Source: authContext.tsx -> 1st useEffect]`,
+        );
+        setIsAuthLoading(false);
+      },
+    );
     return unsubscribeAuth;
   }, []);
 
