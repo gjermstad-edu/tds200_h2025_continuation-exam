@@ -4,6 +4,11 @@ import "@/global.css";
 
 import { useAuthContext } from "@/providers/authContext";
 
+/*
+ ** Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+ ** Brukt med tillatelse.
+ */
+
 export default function Index() {
   const { firebaseUser, userProfile } = useAuthContext();
 
