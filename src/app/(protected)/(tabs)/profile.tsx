@@ -10,7 +10,9 @@ export default function Index() {
 
   return (
     <View className="flex-1 w-full h-full p-5 bg-white items-center">
-      <Text>Du er logget inn 👍 Dette er profilen din 😄</Text>
+      <Text>
+        Du er logget inn {userProfile.firstName} 👍 Dette er profilen din 😄
+      </Text>
       {firebaseUser && (
         <View className="mt-6 w-1/2 md:w-1/3">
           <Pressable
