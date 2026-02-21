@@ -17,19 +17,7 @@ export default function Header() {
             className="text-md font-medium hover:underline web:underline-offset-4"
             href="/"
           >
-            Meny 1
-          </Link>
-          <Link
-            className="text-md font-medium hover:underline web:underline-offset-4"
-            href="/"
-          >
-            Meny 2
-          </Link>
-          <Link
-            className="text-md font-medium hover:underline web:underline-offset-4"
-            href="/"
-          >
-            Meny 3
+            (Meny-knapp)
           </Link>
         </View>
       </View>
