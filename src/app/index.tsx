@@ -115,8 +115,8 @@ export default function Page() {
       <Header />
       <View className="flex-1">
         <View className="py-12 md:py-24 lg:py-32 xl:py-48">
+          <Toast />
           <View className="px-4 md:px-6 items-center">
-            <Toast />
             <View className="flex flex-col items-center gap-4 text-center">
               {firebaseUser && (
                 <Text
@@ -131,25 +131,26 @@ export default function Page() {
                   role="heading"
                   className="text-3xl text-red-600 text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
                 >
-                  Welcome to Project RAMMEVERK 🔨🖼️
+                  Velkommen til Project RAMMEVERK 🔨🖼️
                 </Text>
               )}
 
               <Text className="mx-auto max-w-[700px] text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
-                Discover and collaborate on acme. Explore our services now.
+                Utforsk og lær mer om Firma. Oppdag tjenestene våre nå.
               </Text>
             </View>
             <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
               {/* Switch */}
               <View className="flex-row justify-center items-center my-5">
-                <Text className="text-gray-700 font-medium">Sign-In</Text>
+                <Text className="text-gray-700 font-medium">Logg inn</Text>
                 <Switch
                   value={isSignUp}
                   onValueChange={setIsSignUp}
                   trackColor={{ false: "#ccc", true: "#0096C7" }}
-                  thumbColor={isSignUp ? "#fff" : "#000"}
+                  thumbColor={isSignUp ? "#eee" : "#000"}
+                  className="mx-3"
                 />
-                <Text className="text-gray-700 font-medium">Sign-Up</Text>
+                <Text className="text-gray-700 font-medium">Ny bruker</Text>
               </View>
 
               {/* First and Last Name */}
@@ -173,7 +174,7 @@ export default function Page() {
 
               {/* Email */}
               <View className="mt-4">
-                <Text className="text-gray-800 mb-1">Epost</Text>
+                <Text className="text-gray-800 mb-1">E-post</Text>
                 <TextInput
                   value={userEmail}
                   onChangeText={setUserEmail}
@@ -195,7 +196,7 @@ export default function Page() {
                 />
               </View>
 
-              {/* Auth Buttons */}
+              {/* KNAPP - LOGG INN / LAG NY BRUKER */}
               <View className="mt-6 space-y-3">
                 <Pressable
                   className="bg-sky-600 py-3 rounded-lg items-center"
@@ -212,10 +213,14 @@ export default function Page() {
                         console.info(
                           `New user added: ${userFirstName} ${userLastName} at ${userEmail}`,
                         );
+                        setPassword("");
+                        setUserEmail("");
                       } else {
                         await authApi.signInUser(userEmail, password);
                         showToast("success", "Innlogging vellykket!");
                         console.info(`User logged in: ${userEmail}`);
+                        setPassword("");
+                        setUserEmail("");
                       }
                     } catch (error: any) {
                       showToast(
@@ -228,7 +233,7 @@ export default function Page() {
                   }}
                 >
                   <Text className="text-white font-semibold text-lg">
-                    {isSignUp ? "Lag bruker" : "Logg inn"}
+                    {isSignUp ? "Lag ny bruker" : "Logg inn"}
                   </Text>
                 </Pressable>
 
