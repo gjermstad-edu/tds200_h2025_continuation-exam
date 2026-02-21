@@ -23,9 +23,9 @@ import { UserProfile } from "@/models/UserProfile";
 /*
  ** Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
  ** Brukt med tillatelse.
- **
- ** Denne filen er for om bruker er innlogget (context)
  */
+
+//  Denne filen er for om bruker er innlogget (context)
 
 /**
  * @firebaseUser Firebase Authentication (bl.a. uid, e-post, displayName).
@@ -36,7 +36,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   firebaseUser: FirebaseUser | null;
   userProfile: UserProfile | null;
-  isLoading: boolean;
+  isAuthLoading: boolean;
   isProfileLoading: boolean;
 };
 
@@ -45,7 +45,7 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
   firebaseUser: null,
   userProfile: null,
-  isLoading: false,
+  isAuthLoading: false,
   isProfileLoading: false,
 });
 
@@ -77,13 +77,13 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
     UserProfile | null | undefined
   >(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const router = useRouter();
 
   // Sjekker om logget inn i context
   useEffect(() => {
-    setIsLoading(true);
+    setIsAuthLoading(true);
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setFirebaseUser(user ?? null);
 
@@ -94,7 +94,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      setIsLoading(false);
+      setIsAuthLoading(false);
     });
     return unsubscribeAuth;
   }, []);
@@ -122,7 +122,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
     return unsubscribeProfile;
   }, [firebaseUser?.uid]);
 
-  // Sikrer at data blir lagret i Firebase om den skulle mangle
+  // Sikrer at brukerdata blir lagret i Firebase om den skulle mangle
   useEffect(() => {
     const syncUserProfile = async () => {
       if (!firebaseUser) {
@@ -177,7 +177,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
         },
         firebaseUser,
         userProfile,
-        isLoading,
+        isAuthLoading: isAuthLoading,
         isProfileLoading,
       }}
     >
