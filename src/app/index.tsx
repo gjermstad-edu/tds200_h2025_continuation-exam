@@ -115,7 +115,7 @@ export default function Page() {
       <Header />
       <View className="flex-1">
         <View className="py-12 md:py-24 lg:py-32 xl:py-48">
-          <View className="px-4 md:px-6">
+          <View className="px-4 md:px-6 items-center">
             <Toast />
             <View className="flex flex-col items-center gap-4 text-center">
               {firebaseUser && (
@@ -139,7 +139,7 @@ export default function Page() {
                 Discover and collaborate on acme. Explore our services now.
               </Text>
             </View>
-            <View className="flex flex-col w-11/12 p-6 rounded-2xl">
+            <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
               {/* Switch */}
               <View className="flex-row justify-center items-center my-5">
                 <Text className="text-gray-700 font-medium">Sign-In</Text>
