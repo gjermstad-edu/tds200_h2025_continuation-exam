@@ -1,10 +1,10 @@
 import { PostCategory } from '@/models/PostCategories';
-import type { Timestamp } from 'firebase/firestore';
+import type { FieldValue, Timestamp } from 'firebase/firestore';
 
 /*
- ** Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
- ** Brukt med tillatelse.
- */
+/ Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Brukt med tillatelse.
+*/
 
 export interface PostData {
   postId: string;
@@ -12,7 +12,7 @@ export interface PostData {
   createdByDisplayName: string; // Navn på bruker som lagde post
   title: string;
   description: string;
-  date: Date;
+  date?: Date;
   address?: string;
   coordinates?: { latitude: number; longitude: number };
   maxCapacity: number;
@@ -22,9 +22,18 @@ export interface PostData {
   likes?: string[]; // Uid til andre brukere fra Firestore
   comments: string[]; // kommentarer til post
   images?: string[]; // bilder lastet opp til dugnadssiden. Uid fra Firestore, lagret i Firebase Storage
-  createdAt?: Timestamp | null; // serverTimestamp() returnerer en Fieldvalue for `FieldValue.serverTimestamp`
-  updatedAt?: Timestamp | null;
+  createdAt?: Timestamp | FieldValue | null; // serverTimestamp() returnerer en Fieldvalue for `FieldValue.serverTimestamp`
+  updatedAt?: Timestamp | FieldValue | null;
 }
+
+export type CreatePostInput = {
+  title: string;
+  description: string;
+  address?: string;
+  coordinates?: { latitude: number; longitude: number };
+  images?: string[];
+  categories: PostCategory[];
+};
 
 export interface CommentObject {
   id: string;

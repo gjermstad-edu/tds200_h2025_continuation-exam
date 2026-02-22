@@ -13,7 +13,7 @@ import {
 import { auth, db } from 'root/firebaseConfig';
 
 import { uploadImageToFirebase } from './imageApi';
-import { PostData } from '@/models/PostData';
+import { CreatePostInput, PostData } from '@/models/PostData';
 import { PostCategory } from '@/models/PostCategories';
 
 /*
@@ -36,7 +36,7 @@ import { PostCategory } from '@/models/PostCategories';
 */
 
 // Lag en ny post
-export const createPost = async (post: PostData) => {
+export const createPost = async (post: CreatePostInput) => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error('🚨 Error: User not authenticated [from postApi.ts]');
@@ -68,13 +68,26 @@ export const createPost = async (post: PostData) => {
 
     // Lager objekte/posten vi skal lagre basert på modellen
     const newPostWithMetadata: PostData = {
-      ...post,
+      postId: docRef.id,
+      title: post.title,
+      description: post.description,
+      address: post.address,
+      coordinates: post.coordinates,
+      categories: post.categories,
       images: uploadedImageUrls,
-      organizerUid: user.uid,
-      eventUid: docRef.id,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    } as any;
+
+      createdBy: user.uid,
+      createdByDisplayName: user.displayName ?? "Anonym",
+
+      maxCapacity: 0,
+      participantsUids: [],
+      status: "active",
+      likes: [],
+      comments: [],
+
+      createdAt: serverTimestamp() as any,
+      updatedAt: serverTimestamp() as any,
+    };
 
     // Sender til Firebase
     await setDoc(docRef, newPostWithMetadata);
@@ -172,7 +185,7 @@ export const getRemoteFilteredPosts = async (category: PostCategory[] = []) => {
     q = query(q, where('categories', 'array-contains-any', category));
   }
 
-  q = query(q, where('isActive', '==', true));
+  q = query(q, where('status', '==', `active`));
 
   const snapshot = await getDocs(q);
 
