@@ -46,7 +46,7 @@ export interface CommentData {
   postId: string;
   authorUid: string;
   authorName: string;
-  text: string;
+  commentText: string;
   images?: string[];
   createdAt?: Timestamp | null;
 }

@@ -18,11 +18,22 @@ export default function ProtectedLayout() {
 
   // Om logget inn vises hva som ligger bak Router Guard (hjem-skjermen)
   return (
-    <Stack
-      screenOptions={{
-        header: () => <Header />,
-        headerShown: true,
-      }}
-    />
+    <Stack>
+      <Stack.Screen
+        name="(tabs)"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="postDetails/[id]"
+        options={{
+          headerShown: true,
+          title: "Postdetaljer",
+          headerBackButtonDisplayMode: "generic",
+        }}
+      />
+    </Stack>
   );
 }
