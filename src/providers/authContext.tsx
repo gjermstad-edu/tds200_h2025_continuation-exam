@@ -70,12 +70,8 @@ export function useAuthContext() {
 export function AuthSessionProvider({ children }: { children: ReactNode }) {
   // null = mangler
   // undefined = skal hentes fra Firebase
-  const [firebaseUser, setFirebaseUser] = useState<
-    FirebaseUser | null | undefined
-  >(null);
-  const [userProfile, setUserProfile] = useState<
-    UserProfile | null | undefined
-  >(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
@@ -134,23 +130,25 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
   // Sikrer at brukerdata blir lagret i Firebase om den skulle mangle
   useEffect(() => {
     const syncUserProfile = async () => {
-      if (!firebaseUser) {
-        setUserProfile(null);
-        return;
-      }
+      if (!firebaseUser) return;
 
       const ref = doc(db, "users", firebaseUser.uid);
       const userSnap = await getDoc(ref);
 
       if (!userSnap.exists()) {
-        const name = firebaseUser.displayName.split(" ");
+        const displayName = firebaseUser.displayName ?? "";
+        const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
+
+        const firstName = nameParts[0] ?? "";
+        const lastName =
+          nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
 
         const newUserProfile: UserProfile = {
           userUid: firebaseUser.uid,
-          firstName: name.toString(),
-          lastName: name[name.length - 1].toString(),
+          firstName: nameParts[0] ?? "",
+          lastName: nameParts.length > 1 ? nameParts[nameParts.length - 1] : "",
           phone: "",
-          email: firebaseUser.email,
+          email: firebaseUser.email ?? "",
           role: "user",
         };
 
@@ -158,18 +156,15 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
         await setDoc(ref, {
           ...newUserProfile,
           createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
         });
-
-        // Henter ut oppdatert info med createdAt for bruk på siden
-        const freshSnap = await getDoc(ref);
-        setUserProfile(freshSnap.data() as UserProfile);
-      } else {
-        setUserProfile(userSnap.data() as UserProfile);
       }
     };
 
-    syncUserProfile();
-  }, [firebaseUser]);
+    syncUserProfile().catch((error) =>
+      console.error("🚨 syncUserProfile error:", error),
+    );
+  }, [firebaseUser?.uid]);
 
   /*
    ** Start return-blokk

@@ -16,6 +16,7 @@ import Header from "@/components/Header";
 import { signInWithGoogleCredential } from "@/api/googleSignIn";
 import * as authApi from "@/api/authApi";
 import { useAuthContext } from "@/providers/authContext";
+import { FormInput } from "@/components/FormInput";
 
 /*
  ** Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -31,10 +32,22 @@ export default function Page() {
 
   const { firebaseUser, userProfile } = useAuthContext();
 
-  let userName = "";
-  if (firebaseUser) {
-    userName = firebaseUser.displayName;
+  const userName = firebaseUser?.displayName ?? "";
+
+  // SJEKK INPUT I SKJEMA
+  // Sjekker e-post
+  function isValidEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   }
+
+  const emailHasText = userEmail.trim().length > 0;
+  const emailIsValid = emailHasText ? isValidEmail(userEmail) : undefined;
+
+  const validEmail = emailIsValid; // boolean | undefined
+  const errorEmail =
+    emailHasText && emailIsValid === false
+      ? "E-post er ikke riktig skrevet"
+      : undefined;
 
   const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
   if (!webClientId) {
@@ -112,9 +125,8 @@ export default function Page() {
 
   return (
     <>
-      <Header />
       <View className="flex-1">
-        <View className="py-12 md:py-24 lg:py-32 xl:py-48">
+        <View className="py-24 md:py-32">
           <Toast />
           <View className="px-4 md:px-6 items-center">
             <View className="flex flex-col items-center gap-4 text-center">
@@ -174,13 +186,15 @@ export default function Page() {
 
               {/* Email */}
               <View className="mt-4">
-                <Text className="text-gray-800 mb-1">E-post</Text>
-                <TextInput
+                <FormInput
+                  label="E-post"
                   value={userEmail}
                   onChangeText={setUserEmail}
-                  placeholder="Epost"
+                  placeholder="E-post"
                   autoCapitalize="none"
-                  className="border border-gray-300 rounded-lg px-3 py-2"
+                  keyboardType="email-address"
+                  valid={validEmail}
+                  error={errorEmail}
                 />
               </View>
 
@@ -266,29 +280,6 @@ export default function Page() {
                   <Text className="text-white">Google Sign-In</Text>
                 </Pressable>
               </View>
-
-              {/* KNAPP - Logg ut */}
-              {firebaseUser && (
-                <View className="mt-6">
-                  <Pressable
-                    className="bg-red-500 py-3 rounded-lg items-center"
-                    onPress={async () => {
-                      try {
-                        await authApi.signOutUser();
-                        showToast("success", "Logget ut!");
-                        console.info(`User signed out.`);
-                      } catch (error: any) {
-                        showToast("error", "Feil ved utlogging", error.message);
-                        console.error(error?.message);
-                      }
-                    }}
-                  >
-                    <Text className="text-white font-semibold text-lg">
-                      Logg ut
-                    </Text>
-                  </Pressable>
-                </View>
-              )}
             </View>
           </View>
         </View>

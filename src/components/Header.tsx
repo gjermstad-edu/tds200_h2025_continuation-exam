@@ -1,10 +1,15 @@
 import React from "react";
 import { Link } from "expo-router";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import * as authApi from "@/api/authApi";
+import { useAuthContext } from "@/providers/authContext";
 
 export default function Header() {
   const { top } = useSafeAreaInsets();
+  const { firebaseUser, signOut } = useAuthContext();
+
   return (
     <View style={{ paddingTop: top }}>
       <View className="px-4 lg:px-6 h-14 flex items-center flex-row bg-white border-b border-gray-200">
@@ -12,13 +17,28 @@ export default function Header() {
         <Link className="font-bold flex-1 text-lg" href="/">
           Firma
         </Link>
-        <View className="flex flex-row gap-4 sm:gap-6">
-          <Link
-            className="text-md font-medium hover:underline web:underline-offset-4"
-            href="/"
-          >
-            (Meny-knapp)
-          </Link>
+        <View className="flex flex-row items-center gap-4 sm:gap-6">
+          {firebaseUser && (
+            <View className="mt-6">
+              <Pressable
+                className="bg-red-500 p-1 rounded-lg"
+                onPress={async () => {
+                  try {
+                    await signOut();
+                    // TODO: showToast("success", "Logget ut!");
+                    console.info(`User signed out.`);
+                  } catch (error: any) {
+                    // TODO: showToast("error", "Feil ved utlogging", error.message);
+                    console.error(error?.message);
+                  }
+                }}
+              >
+                <Text className="text-white font-semibold text-lg">
+                  Logg ut
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       </View>
     </View>
