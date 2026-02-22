@@ -17,6 +17,7 @@ import CurrentLocation from "@/components/CurrentLocation";
 import { useAuthContext } from "@/providers/authContext";
 import { CreatePostInput } from "@/models/PostData";
 import { PostCategory } from "@/models/PostCategories";
+import CategoryPicker from "./CategoryPicker";
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -38,6 +39,9 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
 
   const [titleText, setTitleText] = useState("");
   const [descriptionText, setDescriptionText] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<PostCategory[]>(
+    [],
+  );
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [category, setCategory] = useState("");
@@ -70,7 +74,7 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
             />
           </Modal>
 
-          {/* Add image box */}
+          {/* Legg til bilde */}
           {/* Note that Pressable is connected to modal popup by using setIsCameraOpen state. */}
           <Pressable
             onPress={() => setIsCameraOpen(true)}
@@ -101,7 +105,7 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
             </ScrollView>
           )}
 
-          {/* Title */}
+          {/* Tittel */}
           <View className="mb-4">
             <Text className="text-gray-700 font-semibold">Tittel</Text>
             <TextInput
@@ -112,7 +116,7 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
             />
           </View>
 
-          {/* Description */}
+          {/* TODO: Bedre navn? - Beskrivelse */}
           <View className="mb-4">
             <Text className="text-gray-700 font-semibold">Beskrivelse</Text>
             <TextInput
@@ -124,27 +128,25 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
               placeholder="Skriv inn beskrivelse"
             />
           </View>
-          <View className="mt-4">
-            <Text className="text-gray-700 font-semibold mb-1">Category</Text>
-            <View className="border border-gray-300 rounded-lg bg-white">
-              <Picker
-                selectedValue={category}
-                onValueChange={(value) => setCategory(value)}
-                style={{ height: 50 }}
-              >
-                <Picker.Item label="Select category..." value="" />
-                <Picker.Item label="Art" value="Art" />
-                <Picker.Item label="Nature" value="Nature" />
-                <Picker.Item label="Education" value="Education" />
-              </Picker>
+
+          {/* Kategori */}
+          <View className="my-4 w-full">
+            <Text className="text-gray-700 font-semibold mb-1">
+              Velg kategori(er) for posten:
+            </Text>
+            <View className="ml-4">
+              <CategoryPicker
+                selectedCategories={selectedCategories}
+                onChangeSelectedCategories={setSelectedCategories}
+              />
             </View>
           </View>
 
-          {/* fetch expo-location */}
+          {/* Hent expo-location */}
           <CurrentLocation handleLocation={setLocation} />
 
-          {/* Buttons to submit a new post
-          AddNewPost is called with the new post data when "Legg til post" is pressed. */}
+          {/* Knapp: Lag ny post
+          - AddNewPost is called with the new post data when "Legg til post" is pressed. */}
           <View className="flex-row justify-between">
             <Pressable
               className="flex-1 bg-emerald-600 py-3 rounded-lg mr-2 shadow-md"
@@ -159,8 +161,8 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       }
-                    : undefined,
-                  categories: category ? [category as PostCategory] : [],
+                    : null,
+                  categories: selectedCategories,
                 });
 
                 setTitleText("");

@@ -71,8 +71,10 @@ export const createPost = async (post: CreatePostInput) => {
       postId: docRef.id,
       title: post.title,
       description: post.description,
-      address: post.address,
-      coordinates: post.coordinates,
+      
+      ...(post.address ? { address: post.address } : {}),
+      ...(post.coordinates ? { coordinates: post.coordinates } : {}),
+
       categories: post.categories,
       images: uploadedImageUrls,
 
@@ -88,6 +90,8 @@ export const createPost = async (post: CreatePostInput) => {
       createdAt: serverTimestamp() as any,
       updatedAt: serverTimestamp() as any,
     };
+
+    console.log("DEBUG newPostWithMetadata:", JSON.stringify(newPostWithMetadata, null, 2));
 
     // Sender til Firebase
     await setDoc(docRef, newPostWithMetadata);
@@ -107,7 +111,7 @@ export const createPost = async (post: CreatePostInput) => {
       'Vennligst prøv igjen, ingenting er lagret.',
     ); */
     console.error(
-      `🚨 Error:  Error adding new post document to Firestore, ${e} [from postApi.ts/createPost]`,
+      `🚨 Error: Adding new post to Firestore failed: ${e} [from postApi.ts/createPost]`,
     );
     return null;
   }

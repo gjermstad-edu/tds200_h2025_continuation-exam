@@ -199,9 +199,21 @@ export default function PostDetails() {
   return (
     <>
       <View className="flex-1 bg-gray-50">
-        <Stack.Screen options={{ title: post.title }} />
+        <Stack.Screen
+          options={{
+            title: post.title,
+            headerBackButtonDisplayMode: "generic",
+          }}
+        />
 
         <ScrollView contentContainerClassName="p-5">
+          {/* Vises om ingen bilder er lastet opp */}
+          {isTherePhoto === false ? (
+            <Text className="my-5 text-gray-400 text-center ">
+              Ingen bilder lastet opp til denne posten 📷
+            </Text>
+          ) : null}
+
           {/* Viser bilder på toppen om det er lastet opp bilde(r) */}
           {isTherePhoto && (
             <View>
@@ -229,43 +241,8 @@ export default function PostDetails() {
             <Text className="text-3xl font-extrabold text-gray-900 mb-3">
               {post?.title}
             </Text>
-            {/* Lik posten */}
-            <View className="flex:col md:flex-row w-full items-center mb-3">
-              <Text className="text-sm">Liker du denne posten? Vis det: </Text>
 
-              <View className="flex-row">
-                <Pressable
-                  onPress={handleToggleLike}
-                  className="flex-row items-center bg-blue-100 px-3 py-1 rounded-full mr-3"
-                >
-                  <Ionicons
-                    name={
-                      likes.includes(userProfile.userUid)
-                        ? "heart"
-                        : "heart-outline"
-                    }
-                    size={20}
-                    color={likes.includes(userProfile.userUid) ? "red" : "gray"}
-                  />
-                  <Text className="ml-2 text-gray-700">
-                    {likes.includes(userProfile.userUid)
-                      ? "Liker ikke"
-                      : "Liker"}
-                  </Text>
-                </Pressable>
-              </View>
-
-              <Text className="text-gray-600 text-sm">
-                {likes.length === 0
-                  ? "Vær den første til å like posten"
-                  : `${likes.length} liker posten`}
-                .
-              </Text>
-            </View>
             {/* BESKRIVELSE */}
-            <Text className="text-gray-700 font-bold leading-relaxed mb-2">
-              Lengre tekst:
-            </Text>
             <Text className="text-base  text-gray-700 leading-relaxed mb-4">
               {post?.description}
             </Text>
@@ -304,18 +281,45 @@ export default function PostDetails() {
             {/* Divider */}
             <Spacer />
             <View className="h-[1px] bg-gray-200 my-3" />
+
+            {/* Lik posten */}
+            <View className="flex:col md:flex-row w-full items-center mb-3">
+              <Text className="text-sm">Liker du denne posten? Vis det: </Text>
+
+              <View className="flex-row">
+                <Pressable
+                  onPress={handleToggleLike}
+                  className="flex-row items-center bg-blue-100 px-3 py-1 rounded-full mr-3"
+                >
+                  <Ionicons
+                    name={
+                      likes.includes(userProfile.userUid)
+                        ? "heart"
+                        : "heart-outline"
+                    }
+                    size={20}
+                    color={likes.includes(userProfile.userUid) ? "red" : "gray"}
+                  />
+                  <Text className="ml-2 text-gray-700">
+                    {likes.includes(userProfile.userUid)
+                      ? "Liker ikke"
+                      : "Liker"}
+                  </Text>
+                </Pressable>
+              </View>
+
+              <Text className="text-gray-600 text-sm">
+                {likes.length === 0
+                  ? "Vær den første til å like posten"
+                  : `${likes.length} liker posten`}
+                .
+              </Text>
+            </View>
             {/* Post lagd av */}
-            <Text className="text-gray-500 text-sm bold">
-              Forfatter: {post?.createdByDisplayName}
+            <Text className="text-gray-500 text-sm font-bold italic">
+              Skrevet av: {post?.createdByDisplayName}
             </Text>
           </View>
-
-          {/* Vises om ingen bilder er lastet opp */}
-          {isTherePhoto === false ? (
-            <Text className="mt-5 text-gray-400 text-center italic">
-              Ingen bilder lagt til posten 📷
-            </Text>
-          ) : null}
 
           {/* Kommentarer */}
           <Text className="text-xl font-semibold mb-3">Kommentarer</Text>
@@ -324,6 +328,11 @@ export default function PostDetails() {
             <ActivityIndicator size="large" />
           ) : (
             <View className="min-h-24">
+              {postComments.length === 0 && (
+                <Text className="italic">
+                  Ingen har skrevet en kommentar enda, du kan være første!
+                </Text>
+              )}
               {postComments.map((item) => (
                 <View
                   key={item.id}
@@ -339,15 +348,15 @@ export default function PostDetails() {
                       {/* TODO: Skal forfatter stå med tekst eller med badge? Bestem deg eller fjern dobbel */}
                       {isLargeScreen &&
                       post.createdBy === item.comment.authorUid ? (
-                        <Text className="text-xs">(Forfatter)</Text>
+                        <Text className="text-xs"> (forfatter)</Text>
                       ) : (
-                        <Text> </Text>
+                        <Text></Text>
                       )}
                       {!isLargeScreen &&
                       post.createdBy === item.comment.authorUid ? (
-                        <Text className="text-xs">(Forfatter)</Text>
+                        <Text className="text-xs"> (forfatter)</Text>
                       ) : (
-                        <Text> </Text>
+                        <Text></Text>
                       )}
                       <Text>:</Text>
                     </View>

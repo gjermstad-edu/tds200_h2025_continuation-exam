@@ -76,11 +76,13 @@ export default function Post({ postData, refreshPosts }: PostProps) {
 
       {/* TODO: Footer */}
       <View className="flex-row justify-between items-center px-4 py-3 border-t border-gray-100 bg-gray-50">
-        <View className="flex-row flex-wrap mb-3">
-          <Text>
-            Sett inn kategori/hashtagg eller noe annet her (se Yuan sin kode)
-          </Text>
-        </View>
+        {postData.categories.length != 0 ? (
+          <View className="flex-row flex-wrap mb-3">
+            <Text>Kategori: {postData.categories}</Text>
+          </View>
+        ) : (
+          <Text>Ingen kategorier valgt</Text>
+        )}
 
         <Text className="text-xs text-gray-500 italic underline">
           {postData.createdByDisplayName}
