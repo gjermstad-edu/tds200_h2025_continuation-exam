@@ -33,6 +33,7 @@ export type CreatePostInput = {
   coordinates?: { latitude: number; longitude: number };
   images?: string[];
   categories: PostCategory[];
+  maxCapacity: number;
 };
 
 export interface CommentObject {

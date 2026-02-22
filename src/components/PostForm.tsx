@@ -20,7 +20,7 @@ import { PostCategory } from "@/models/PostCategories";
 import CategoryPicker from "./CategoryPicker";
 
 /*
-/ Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
 / Brukt med tillatelse.
 */
 
@@ -44,13 +44,18 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
   );
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const [category, setCategory] = useState("");
   const [location, setLocation] = useState<{
     coords: any;
     address: string;
   } | null>(null);
+  const [maxParticipants, setMaxParticipants] = useState(0);
 
   const { firebaseUser, userProfile } = useAuthContext();
+
+  const handleNumberInputVoluteers = (text) => {
+    const cleanedNumber = text.replace(/[^0-9]/g, "");
+    setMaxParticipants(parseInt(cleanedNumber));
+  };
 
   return (
     <View className="flex-1 bg-gray-100">
@@ -142,6 +147,20 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
             </View>
           </View>
 
+          {/* Sett maks antall deltagere */}
+          <View className="my-4 w-full">
+            <Text className="text-gray-700 font-semibold mb-1">
+              Max antall deltagere?
+            </Text>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={handleNumberInputVoluteers}
+              value={maxParticipants.toString()}
+              className="border border-gray-300 rounded-lg p-3 mt-1 bg-gray-50"
+              placeholder="Hvor mange deltagere?"
+            />
+          </View>
+
           {/* Hent expo-location */}
           <CurrentLocation handleLocation={setLocation} />
 
@@ -163,6 +182,7 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
                       }
                     : null,
                   categories: selectedCategories,
+                  maxCapacity: maxParticipants,
                 });
 
                 setTitleText("");

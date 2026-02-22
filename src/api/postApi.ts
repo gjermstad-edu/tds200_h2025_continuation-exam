@@ -81,7 +81,7 @@ export const createPost = async (post: CreatePostInput) => {
       createdBy: user.uid,
       createdByDisplayName: user.displayName ?? "Anonym",
 
-      maxCapacity: 0,
+      maxCapacity: post.maxCapacity ?? 0,
       participantsUids: [],
       status: "active",
       likes: [],
