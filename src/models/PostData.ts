@@ -6,7 +6,7 @@ import type { FieldValue, Timestamp } from 'firebase/firestore';
 / Brukt med tillatelse.
 */
 
-export type InjuryStatus = 'forbedres' | 'stabil' | 'forverres';
+export type InjuryStatus = 'ny skade' | 'forbedres' | 'stabil' | 'forverres' | 'frisk';
 
 export interface PostData {
   // ID på skade
