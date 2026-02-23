@@ -7,8 +7,8 @@ import { PostData } from "@/models/PostData";
 import { deletePost } from "@/api/postApi";
 import { useAuthContext } from "@/providers/authContext";
 
-// TODO
-import Toast from "react-native-toast-message";
+// TODO import Toast from "react-native-toast-message";
+import PostDate from "./PostDate";
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -41,49 +41,50 @@ export default function Post({ postData, refreshPosts }: PostProps) {
   return (
     <View className="bg-white rounded-2xl mb-5 shadow-md overflow-hidden">
       {/* Innhold */}
-      <View className="px-4 pt-4">
-        {/* Tittel og beskrivelse inni en link */}
-        <Link
-          href={{
-            pathname: "/postDetails/[id]",
-            params: { id: postData.postId },
-          }}
-          className="flex-1"
-        >
-          <View>
-            <Text className="text-xl font-extrabold text-gray-800">
-              {postData.title}
-            </Text>
-            <Text className="text-sm text-gray-600 mt-1 leading-snug">
-              {postData.description}
+      <Link
+        href={{
+          pathname: "/postDetails/[id]",
+          params: { id: postData.postId },
+        }}
+        className="flex-1"
+      >
+        <View className="flex-1 flex-row w-full items-center p-4">
+          <View className="flex-1 flex-col">
+            {/* Info inni en link */}
+
+            <View>
+              <Text className="text-xl font-extrabold text-gray-800">
+                Skadelokasjon: {postData.injuryLocation}
+              </Text>
+              <Text className="text-sm text-gray-600 mt-1 leading-snug">
+                Status: {postData.statusIndicator}
+              </Text>
+            </View>
+          </View>
+
+          {/* Knapp for slett */}
+          <View className="flex-col justify-end items-center space-x-4">
+            {/* TODO Delete button (only if owner) */}
+            {/* {user?.uid === postData.ownerId && ( */}
+            <Pressable
+              onPress={handleDelete}
+              className="bg-red-500 rounded-full p-2 active:bg-red-600"
+            >
+              <Ionicons name="trash-outline" size={22} color="white" />
+            </Pressable>
+            {/* )} */}
+          </View>
+        </View>
+
+        {/* TODO: Footer */}
+        <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
+          <View className="flex-row flex-wrap mb-3">
+            <Text>
+              Dato registert: <PostDate value={postData.createdAt} />
             </Text>
           </View>
-        </Link>
-
-        {/* Knapp for slett */}
-        <View className="flex-row justify-end items-center mt-3 space-x-4">
-          {/* TODO Delete button (only if owner) */}
-          {/* {user?.uid === postData.ownerId && ( */}
-          <Pressable
-            onPress={handleDelete}
-            className="bg-red-500 rounded-full p-2 active:bg-red-600"
-          >
-            <Ionicons name="trash-outline" size={22} color="white" />
-          </Pressable>
-          {/* )} */}
         </View>
-      </View>
-
-      {/* TODO: Footer */}
-      <View className="flex-row justify-between items-center px-4 py-3 border-t border-gray-100 bg-gray-50">
-        <View className="flex-row flex-wrap mb-3">
-          <Text>Skadelokasjon: {postData.injuryLocation}</Text>
-        </View>
-
-        <Text className="text-xs text-gray-500 italic underline">
-          {postData.createdByDisplayName}
-        </Text>
-      </View>
+      </Link>
     </View>
   );
 }

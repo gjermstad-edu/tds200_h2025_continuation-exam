@@ -33,7 +33,7 @@ export const addComment = async (postId: string, comment: CommentData) => {
 
   await setDoc(commentRef, payload);
 
-  await updateDoc(doc(db, 'posts', postId), {
+  await updateDoc(doc(db, 'injuryEntries', postId), {
     comments: arrayUnion(commentRef.id),
   });
   
@@ -69,7 +69,7 @@ export const getCommentsByIds = async (ids: string[]) => {
 // Sletter en kommentar
 export const deleteComment = async (commentId: string, postId: string) => {
   try {
-    const postRef = doc(db, 'posts', postId);
+    const postRef = doc(db, 'injuryEntries', postId);
 
     await updateDoc(postRef, {
       comments: arrayRemove(commentId),

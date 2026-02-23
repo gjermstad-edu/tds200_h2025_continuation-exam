@@ -18,6 +18,7 @@ import * as commentApi from "@/api/commentApi";
 import { CommentData, CommentObject, PostData } from "@/models/PostData";
 import { useAuthContext } from "@/providers/authContext";
 import Spacer from "@/components/Spacer";
+import PostDate from "@/components/PostDate";
 
 // TODO import { showInfoToast, showSuccessToast } from '@/utils/toast';
 
@@ -57,78 +58,6 @@ export default function PostDetails() {
 
     fetchPostFromBackend();
   }, [id]);
-
-  const handleToggleLike = async () => {
-    if (!post || !userProfile) return;
-
-    // Compute new likes array locally
-    const alreadyLiked = (post.likes || []).includes(userProfile.userUid);
-    if (!alreadyLiked) {
-      console.log(
-        `👍 ${firebaseUser.displayName} liked the post "${post.title}"`,
-      );
-    } else {
-      console.log(
-        `👎 ${firebaseUser.displayName} unliked the post "${post.title}"`,
-      );
-    }
-    const updatedLikes = alreadyLiked
-      ? post.likes?.filter((user) => user !== userProfile.userUid)
-      : [...(post.likes || []), userProfile.userUid];
-
-    // Update local UI state instantly
-    setPost({ ...post, likes: updatedLikes });
-    setLikes(updatedLikes);
-
-    try {
-      // Update Firestore
-      await postApi.updatePost(post.postId, { likes: updatedLikes });
-    } catch (error) {
-      console.error(
-        `🚨 Error updating likes for the post "${post.title}":`,
-        error,
-      );
-    }
-  };
-
-  const handleToggleVolunteer = async () => {
-    if (!post || !userProfile.userUid) return;
-
-    // Compute new volunteers array locally
-    const alreadyParticipates = (post.participantsUids || []).includes(
-      userProfile.userUid,
-    );
-    if (!alreadyParticipates) {
-      // TODO: Insert Toast
-      console.log(
-        `🙋‍♂️ ${firebaseUser.displayName} participates in the post "${post.title}"`,
-      );
-    } else {
-      // TODO: Insert Toast
-      console.log(
-        `🙅‍♂️ ${firebaseUser.displayName} remove his participation from post "${post.title}"`,
-      );
-    }
-    const updatedVolunteers = alreadyParticipates
-      ? post.participantsUids?.filter((user) => user !== userProfile.userUid)
-      : [...(post.participantsUids || []), userProfile.userUid];
-
-    // Update local UI state instantly
-    setPost({ ...post, participantsUids: updatedVolunteers });
-    setParticipants(updatedVolunteers);
-
-    try {
-      // Update Firestore
-      await postApi.updatePost(post.postId, {
-        participantsUids: updatedVolunteers,
-      });
-    } catch (error) {
-      console.error(
-        `🚨 Error while updating participants for the post "${post.title}": ${error}`,
-      );
-    }
-    console.log("Updated list over participants should be:", updatedVolunteers);
-  };
 
   // Henter kommentarer til posten
   const fetchComments = async (commentIds: string[]) => {
@@ -177,7 +106,7 @@ export default function PostDetails() {
     setIsLoadingAddComment(false);
   };
 
-  // Vis loading-beskjed mens posten lastes inn
+  // Vis loading-beskjed mens skadeobservasjonen lastes inn
   if (!post) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center">
@@ -190,9 +119,6 @@ export default function PostDetails() {
   // Er det lastet opp noen bilder?
   const firstImageUri = post?.images?.[0];
   const isTherePhoto = !!(firstImageUri && firstImageUri !== "ERROR");
-
-  // Sjekker om brukeren er påmeldt
-  const isParticipating = participants.includes(userProfile.userUid);
 
   // ----------------------------------------------------------------------------------------
 
@@ -207,122 +133,75 @@ export default function PostDetails() {
         />
 
         <ScrollView contentContainerClassName="p-5">
-          {/* Vises om ingen bilder er lastet opp */}
-          {isTherePhoto === false ? (
-            <Text className="my-5 text-gray-400 text-center ">
-              Ingen bilder lastet opp til denne posten 📷
-            </Text>
-          ) : null}
-
-          {/* Viser bilder på toppen om det er lastet opp bilde(r) */}
-          {isTherePhoto && (
-            <View>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                className="w-full h-80 rounded-xl overflow-hidden shadow-md"
-              >
-                {post.images.map((uri: string, index: number) => (
-                  <Image
-                    key={index}
-                    source={{ uri }}
-                    className="w-96 h-80"
-                    resizeMode="cover"
-                  />
-                ))}
-              </ScrollView>
-            </View>
-          )}
-
           {/* Post content */}
           <View className="bg-white rounded-2xl shadow-md p-6 mb-6">
-            {/* TITTEL */}
-            <Text className="text-3xl font-extrabold text-gray-900 mb-3">
-              {post?.title}
+            {/* Detaljeinfo */}
+            <Text className="text-xl font-extrabold text-gray-900 mb-3">
+              Skadeindikatorer
+            </Text>
+            <Text className="text-base font-extrabold text-gray-900 mb-3">
+              Skadelokasjon: {post?.injuryLocation}
             </Text>
 
-            {/* BESKRIVELSE */}
-            <Text className="text-base  text-gray-700 leading-relaxed mb-4">
-              {post?.description}
+            <Text className="text-base font-normal text-gray-900 mb-3">
+              Smertenivå (0-10): {post?.painLevel}
             </Text>
+
+            <Text className="text-base font-normal text-gray-900 mb-3">
+              Hevelse: {post?.swelling ? "Ja" : "Nei"}
+            </Text>
+            <Text className="text-base font-normal text-gray-900 mb-3">
+              Begrenset bevegelighet: {post?.mobilityLimit ? "Ja" : "Nei"}
+            </Text>
+            <Text className="text-base font-normal text-gray-900 mb-3">
+              Temperatur: {post?.temperature}°C
+            </Text>
+
             {/* Divider */}
-            <View className="h-[1px] bg-gray-200 my-3" />
+            <View className="h-[1px] bg-gray-200 my-2" />
             <Spacer />
-            <Text className="text-gray-700 font-bold leading-relaxed">
-              Deltakere:
-            </Text>
-            <Text className="text-base  text-gray-700 leading-relaxed">
-              Denne posten søker {post.maxCapacity} deltakere som kan
-              delta.{" "}
-            </Text>
-            {post.participantsUids.length < post.maxCapacity ? (
-              <Text className="text-base  text-gray-700 leading-relaxed mb-2">
-                {post.participantsUids.length} har meldt seg på til å delta.{" "}
-                {post.maxCapacity - post.participantsUids.length} ledige
-                plasser.
-              </Text>
-            ) : (
-              <Text className="text-base  text-gray-700 leading-relaxed mb-2">
-                Hittil har {post.participantsUids.length} meldt seg til å delta
-              </Text>
+
+            {post.description && (
+              <>
+                {/* BESKRIVELSE */}
+                <Text className="text-base font-medium text-gray-500 italic">
+                  Beskrivelse:
+                </Text>
+                <Text className="text-base">{post?.description}</Text>
+                <Spacer />
+                <View className="h-[1px] bg-gray-200 mb-3" />
+              </>
             )}
-            {/* Knapp - Av- og påmelding */}
-            <Pressable
-              onPress={handleToggleVolunteer}
-              className={isParticipating ? "bg-red-600" : "bg-green-600"}
-            >
-              <Text>
-                {participants.includes(userProfile.userUid)
-                  ? "Meld deg av"
-                  : "Meld deg på"}
-              </Text>
-            </Pressable>
-            {/* Divider */}
-            <Spacer />
-            <View className="h-[1px] bg-gray-200 my-3" />
-
-            {/* Lik posten */}
-            <View className="flex:col md:flex-row w-full items-center mb-3">
-              <Text className="text-sm">Liker du denne posten? Vis det: </Text>
-
-              <View className="flex-row">
-                <Pressable
-                  onPress={handleToggleLike}
-                  className="flex-row items-center bg-blue-100 px-3 py-1 rounded-full mr-3"
-                >
-                  <Ionicons
-                    name={
-                      likes.includes(userProfile.userUid)
-                        ? "heart"
-                        : "heart-outline"
-                    }
-                    size={20}
-                    color={likes.includes(userProfile.userUid) ? "red" : "gray"}
-                  />
-                  <Text className="ml-2 text-gray-700">
-                    {likes.includes(userProfile.userUid)
-                      ? "Liker ikke"
-                      : "Liker"}
-                  </Text>
-                </Pressable>
-              </View>
-
-              <Text className="text-gray-600 text-sm">
-                {likes.length === 0
-                  ? "Vær den første til å like posten"
-                  : `${likes.length} liker posten`}
-                .
-              </Text>
-            </View>
             {/* Post lagd av */}
             <Text className="text-gray-500 text-sm font-bold italic">
-              Skrevet av: {post?.createdByDisplayName}
+              Skadeoppføring registrert
             </Text>
           </View>
 
+          <Text className="text-xl font-semibold my-3">
+            Bilder ({post.images.length} stk)
+          </Text>
+
+          <View>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              className="w-full h-80 rounded-xl overflow-hidden bg-slate-300"
+            >
+              {post.images.map((uri: string, index: number) => (
+                <Image
+                  key={index}
+                  source={{ uri }}
+                  className="w-96 h-80"
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+          </View>
+
           {/* Kommentarer */}
-          <Text className="text-xl font-semibold mb-3">Kommentarer</Text>
+          <Text className="text-xl font-semibold my-3">Egne notater</Text>
 
           {isLoadingComments && !postComments ? (
             <ActivityIndicator size="large" />
@@ -330,7 +209,7 @@ export default function PostDetails() {
             <View className="min-h-24">
               {postComments.length === 0 && (
                 <Text className="italic">
-                  Ingen har skrevet en kommentar enda, du kan være første!
+                  Her kan du skrive egne notater rundt oppføringen
                 </Text>
               )}
               {postComments.map((item) => (
@@ -340,27 +219,6 @@ export default function PostDetails() {
                 >
                   {/* Kommentarer - Innhold */}
                   <View className="flex-1 mr-3">
-                    <View className="flex-row">
-                      <Text className="text-gray-800 font-semibold">
-                        {item.comment.authorName}
-                      </Text>
-
-                      {/* TODO: Skal forfatter stå med tekst eller med badge? Bestem deg eller fjern dobbel */}
-                      {isLargeScreen &&
-                      post.createdBy === item.comment.authorUid ? (
-                        <Text className="text-xs"> (forfatter)</Text>
-                      ) : (
-                        <Text></Text>
-                      )}
-                      {!isLargeScreen &&
-                      post.createdBy === item.comment.authorUid ? (
-                        <Text className="text-xs"> (forfatter)</Text>
-                      ) : (
-                        <Text></Text>
-                      )}
-                      <Text>:</Text>
-                    </View>
-
                     <Text className="text-gray-700">
                       {item.comment.commentText}
                     </Text>
@@ -368,12 +226,12 @@ export default function PostDetails() {
                     <View className="h-[1px] bg-gray-200 my-1" />
 
                     <Text className="text-xs text-gray-500">
-                      Skrevet {/* TODO: Kode for å legge inn dato */}
+                      Skrevet <PostDate value={post.createdAt} />
                     </Text>
                   </View>
 
                   {/* Knapp: Slett kommentar (om forfatter) */}
-                  {item.comment.authorUid === userProfile.userUid && (
+                  {item.comment.authorUid === firebaseUser.uid && (
                     <Pressable
                       onPress={async () => {
                         await commentApi.deleteComment(item.id, post.postId);

@@ -51,21 +51,25 @@ export default function Index() {
         await getPostsFromBackend(filterCategories);
       };
       fetchData();
-    }, []),
+    }, [firebaseUser, filterCategories]),
   );
 
   // 1) Filter - Følger med på om valgte filter endrer seg
   useEffect(() => {
+    if (!firebaseUser) return;
+
     const fetchFiltered = async () => {
       await getPostsFromBackend(filterCategories);
     };
     fetchFiltered();
-  }, [filterCategories]);
+  }, [firebaseUser, filterCategories]);
 
   // 2) Filter - Finner posts basert på valgt kategori
   const getPostsFromBackend = async (
     category: InjuryLocation | null = null,
   ) => {
+    if (!firebaseUser) return;
+
     const filteredPosts = await postApi.getRemoteFilteredPosts(category);
     setAllPosts(filteredPosts);
     setPosts(filteredPosts);
@@ -99,7 +103,7 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 p-5 items-center justify-center bg-gray-50">
+    <View className="flex-1 flex-col p-5 items-center justify-center bg-gray-50">
       <Pressable
         className="bg-sky-600 p-3 rounded-lg items-center"
         onPress={() => setIsModalOpen(true)}
@@ -134,7 +138,11 @@ export default function Index() {
         <View className="w-full px-5 mt-4">
           <View className="bg-green-100 border border-green-300 rounded-xl p-4 shadow-sm">
             <Text className="text-green-700 font-semibold text-lg">
-              Hei, {firebaseUser.displayName}!
+              {firebaseUser?.displayName ? (
+                <Text>Hei, {firebaseUser.displayName}!</Text>
+              ) : (
+                <Text>Hei!</Text>
+              )}
             </Text>
             <Text className="text-green-600 text-sm mt-1">
               Velkommen tilbake – hyggelig å se deg igjen.
@@ -211,7 +219,7 @@ export default function Index() {
       {/* Flatlist shows list of posts with like functionality
       It renders Post component for each post */}
       <FlatList
-        className="w-full px-5"
+        className="flex-1 w-full px-5"
         data={posts}
         ListHeaderComponent={() => <Spacer height={10} />}
         ListFooterComponent={() => <Spacer height={50} />}
