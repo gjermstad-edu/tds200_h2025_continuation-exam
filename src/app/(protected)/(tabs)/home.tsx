@@ -41,6 +41,7 @@ export default function Index() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWelcomeShowing, setIsWelcomeShowing] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isShowFilters, setIsShowFilters] = useState(false);
   const [filterCategories, setFilterCategories] =
     useState<InjuryLocation | null>(null);
 
@@ -92,18 +93,23 @@ export default function Index() {
     setPosts(locallyFiltered);
   }, [searchQuery, allPosts]);
 
-  // Fjerner melding på toppen
+  // Fjerner melding på toppen etter 5 sec
   useEffect(() => {
     const timerId = setTimeout(removeWelcome, 5000);
     return () => clearTimeout(timerId);
   }, []);
 
+  // Små hjelpefunksjoner
   function removeWelcome() {
     setIsWelcomeShowing(false);
   }
 
+  function toggleShowFilter() {
+    setIsShowFilters(!isShowFilters);
+  }
+
   return (
-    <View className="flex-1 flex-col p-5 items-center justify-center bg-gray-50">
+    <View className="flex-1 flex-col p-5 items-center bg-gray-50">
       <Pressable
         className="bg-sky-600 p-3 rounded-lg items-center"
         onPress={() => setIsModalOpen(true)}
@@ -151,84 +157,108 @@ export default function Index() {
         </View>
       )}
 
-      <View className="w-full px-5 my-4">
-        {/* Search bar */}
-        <Text className="py-1 font-bold">Søk i skadeobservasjonene dine:</Text>
-        <TextInput
-          placeholder="Skriv søkeord her..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          className="bg-white border border-gray-300 text-gray-400 rounded-lg p-2 mb-3"
-        />
+      {/* FILTRERING */}
+      <Pressable
+        onPress={toggleShowFilter}
+        className="p-2 mx-4 mt-4 rounded-lg items-center border-blue-800 border-2"
+      >
+        <Text className=" font-bold">
+          {isShowFilters ? "Skjul søk og filtrering" : "Vis søk og filtrering"}
+        </Text>
+      </Pressable>
 
-        {/* Category filter */}
-        <Text className="py-1 font-bold">
-          Filtrer skadeobservasjoner på skade:
-        </Text>
-        <Picker
-          className="bg-white border border-gray-300 rounded-lg p-2 mb-3"
-          selectedValue={filterCategories ?? ""}
-          onValueChange={(value) => {
-            // hvis tom streng -> null (ingen filter)
-            setFilterCategories(value ? (value as InjuryLocation) : null);
-          }}
-        >
-          <Picker.Item label="Alle skader" value="" />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Elbow)}
-            value={InjuryLocation.Elbow}
+      {isShowFilters && (
+        <View className="w-full px-5 my-4">
+          {/* Search bar */}
+          <Text className="py-1 font-bold">
+            Søk i skadeobservasjonene dine:
+          </Text>
+          <TextInput
+            placeholder="Skriv søkeord her..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="bg-white border border-gray-300 text-gray-400 rounded-lg p-2 mb-3"
           />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Ankle)}
-            value={InjuryLocation.Ankle}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Hip)}
-            value={InjuryLocation.Hip}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Wrist)}
-            value={InjuryLocation.Wrist}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Knee)}
-            value={InjuryLocation.Knee}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Neck)}
-            value={InjuryLocation.Neck}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Back)}
-            value={InjuryLocation.Back}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Shoulder)}
-            value={InjuryLocation.Shoulder}
-          />
-          <Picker.Item
-            label={injuryLocationLabel(InjuryLocation.Other)}
-            value={InjuryLocation.Other}
-          />
-        </Picker>
-        <Text className="py-1 font-bold">
-          Dine registrerte skadeobservasjoner:
-        </Text>
+
+          {/* Category filter */}
+          <Text className="py-1 font-bold">
+            Filtrer skadeobservasjoner på skade:
+          </Text>
+          <Picker
+            className="bg-white border border-gray-300 rounded-lg p-2 mb-3"
+            selectedValue={filterCategories ?? ""}
+            onValueChange={(value) => {
+              // hvis tom streng -> null (ingen filter)
+              setFilterCategories(value ? (value as InjuryLocation) : null);
+            }}
+          >
+            <Picker.Item label="Alle skader" value="" />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Elbow)}
+              value={InjuryLocation.Elbow}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Ankle)}
+              value={InjuryLocation.Ankle}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Hip)}
+              value={InjuryLocation.Hip}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Wrist)}
+              value={InjuryLocation.Wrist}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Knee)}
+              value={InjuryLocation.Knee}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Neck)}
+              value={InjuryLocation.Neck}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Back)}
+              value={InjuryLocation.Back}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Shoulder)}
+              value={InjuryLocation.Shoulder}
+            />
+            <Picker.Item
+              label={injuryLocationLabel(InjuryLocation.Other)}
+              value={InjuryLocation.Other}
+            />
+          </Picker>
+        </View>
+      )}
+      <View className="w-full px-5 my-4">
+        <Text className="font-bold">Dine registrerte skadeobservasjoner:</Text>
       </View>
 
       {/* Flatlist shows list of posts with like functionality
       It renders Post component for each post */}
-      <FlatList
-        className="flex-1 w-full px-5"
-        data={posts}
-        ListHeaderComponent={() => <Spacer height={10} />}
-        ListFooterComponent={() => <Spacer height={50} />}
-        ItemSeparatorComponent={() => <Spacer height={8} />}
-        renderItem={(post) => (
-          <Post postData={post.item} refreshPosts={getPostsFromBackend} />
-        )}
-        keyExtractor={(item) => item.postId}
-      />
+      {posts.length >= 1 ? (
+        <FlatList
+          className="flex-1 w-full px-5"
+          data={posts}
+          ListHeaderComponent={() => <Spacer height={10} />}
+          ListFooterComponent={() => <Spacer height={50} />}
+          ItemSeparatorComponent={() => <Spacer height={8} />}
+          renderItem={(post) => (
+            <Post postData={post.item} refreshPosts={getPostsFromBackend} />
+          )}
+          keyExtractor={(item) => item.postId}
+        />
+      ) : (
+        <>
+          <Text>Ingen skadeoppføringer tilgjengelig 👀</Text>
+          <Text className="italic text-gray-700 my-2 text-center">
+            (Om du har gjort en søk eller filtrert på skade kan det være det
+            ikke finnes noen som passer med søket/filteret)
+          </Text>
+        </>
+      )}
     </View>
   );
 }
