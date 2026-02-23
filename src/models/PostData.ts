@@ -1,4 +1,4 @@
-import { PostCategory } from '@/models/PostCategories';
+import { InjuryLocation } from '@/models/PostCategories';
 import type { FieldValue, Timestamp } from 'firebase/firestore';
 
 /*
@@ -6,34 +6,55 @@ import type { FieldValue, Timestamp } from 'firebase/firestore';
 / Brukt med tillatelse.
 */
 
+export type InjuryStatus = 'forbedres' | 'stabil' | 'forverres';
+
 export interface PostData {
+  // ID på skade
   postId: string;
-  createdBy: string; // Uid til brukeren fra Firestore
-  createdByDisplayName: string; // Navn på bruker som lagde post
-  title: string;
-  description: string;
-  date?: Date;
+
+  // eier av skaden
+  createdBy: string; // uid for bruker
+  createdByDisplayName?: string;
+
+  // kjernefelter
+  injuryLocation: InjuryLocation;
+  painLevel: number; // 0-10
+  swelling: boolean;
+  mobilityLimit: boolean;
+  temperature: number; // 34-42
+  description?: string;
+
+  // bilde(r) av skade - obligatorisk minst 1
+  images: string[];
+
+  // beregnet før lagring
+  statusIndicator: InjuryStatus;
+  statusExplanation: string;
+
+  // timestamps
+  createdAt?: Timestamp | FieldValue | null;
+  updatedAt?: Timestamp | FieldValue | null;
+
+  // (legacy fields)
+  title?: string;
+  categories?: string[];
+  maxCapacity?: number;
+  participantsUids?: string[];
+  likes?: string[];
+  comments?: string[];
   address?: string;
   coordinates?: { latitude: number; longitude: number };
-  maxCapacity: number;
-  participantsUids: string[]; // array med Uid fra Firestore
-  categories: PostCategory[];
-  status: 'active' | 'upcoming' | 'completed'; // Trengs det flere?
-  likes?: string[]; // Uid til andre brukere fra Firestore
-  comments: string[]; // kommentarer til post
-  images?: string[]; // bilder lastet opp til dugnadssiden. Uid fra Firestore, lagret i Firebase Storage
-  createdAt?: Timestamp | FieldValue | null; // serverTimestamp() returnerer en Fieldvalue for `FieldValue.serverTimestamp`
-  updatedAt?: Timestamp | FieldValue | null;
 }
 
 export type CreatePostInput = {
   title: string;
-  description: string;
-  address?: string;
-  coordinates?: { latitude: number; longitude: number };
-  images?: string[];
-  categories: PostCategory[];
-  maxCapacity: number;
+  description?: string;
+  images: string[];
+  injuryLocation: InjuryLocation;
+  painLevel: number; // 0-10
+  swelling: boolean;
+  mobilityLimit: boolean;
+  temperature: number; // 34-42
 };
 
 export interface CommentObject {
@@ -41,7 +62,7 @@ export interface CommentObject {
   comment: CommentData;
 }
 
-// Innholdet i en kommentar
+// Innhold i en kommentar
 export interface CommentData {
   commentId: string;
   postId: string;
