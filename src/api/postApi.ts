@@ -123,7 +123,10 @@ export const createPost = async (post: CreatePostInput) => {
 
 // Hent alle poster fra databasen
 export const getAllPosts = async () => {
-  const queryResult = await getDocs(collection(db, COLLECTION_NAME));
+  const postsRef = collection(db, COLLECTION_NAME);
+  const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
+
+  const queryResult = await getDocs(postsQuery);
 
   return queryResult.docs.map((doc) => {
     return { ...doc.data(), postId: doc.id } as PostData;
@@ -186,11 +189,11 @@ export const updatePost = async (postId: string, updateData: Partial<PostData>) 
 };
 
 // Hent poster filtrert på kategorie (remote)
-export const getRemoteFilteredPosts = async (locations: InjuryLocation[] = []) => {
+export const getRemoteFilteredPosts = async (location: InjuryLocation) => {
   let q = query(collection(db, COLLECTION_NAME));
 
-  if (locations.length >= 1) {
-    q = query(q, where('injuryLocation', 'in', locations));
+  if (location.length >= 1) {
+    q = query(q, where('injuryLocation', 'in', location));
   }
 
   const snapshot = await getDocs(q);
