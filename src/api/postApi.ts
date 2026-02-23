@@ -14,8 +14,9 @@ import {
 import { auth, db } from 'root/firebaseConfig';
 
 import { uploadImageToFirebase } from './imageApi';
-import { CreatePostInput, PostData } from '@/models/PostData';
+import { CreatePostInput, PostData, PostDataFirestore } from '@/models/PostData';
 import { InjuryLocation } from '@/models/PostCategories';
+import { timestampToDate } from '@/util/timestampToDate';
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -71,7 +72,7 @@ export const createPost = async (post: CreatePostInput) => {
     const docRef = doc(postsCollection);
 
     // Lager objekte/posten vi skal lagre basert på modellen
-    const newPostWithMetadata: PostData = {
+    const newPostWithMetadata: PostDataFirestore = {
       postId: docRef.id,
       createdBy: user.uid,
       createdByDisplayName: user.displayName ?? "Anonym",
@@ -92,8 +93,8 @@ export const createPost = async (post: CreatePostInput) => {
 
       comments: [],
 
-      createdAt: serverTimestamp() as any,
-      updatedAt: serverTimestamp() as any,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     };
 
     console.log("DEBUG newPostWithMetadata:", JSON.stringify(newPostWithMetadata, null, 2));
@@ -108,7 +109,12 @@ export const createPost = async (post: CreatePostInput) => {
     // showSuccessToast('👍 Ny post er opprettet og publisert', 'Du finner den på hjem-skjermen.');
 
     // Returnerer objektet
-    return { id: docRef.id, ...newPostWithMetadata };
+    return {
+      ...newPostWithMetadata,
+      postId: docRef.id,
+      createdAt: null,
+      updatedAt: null,
+    } as unknown as PostData;
   } catch (e) {
     // TODO: Fiks Toast eller fjern
     /* showErrorToast(
@@ -130,13 +136,15 @@ export const getAllPosts = async () => {
 
     const queryResult = await getDocs(postsQuery);
 
-    console.log("DEBUG getAllPosts size:", queryResult.size);
-    queryResult.docs.slice(0, 3).forEach((docSnap) => {
-      console.log("DEBUG post:", docSnap.id, docSnap.data()?.createdAt);
-    });
-
     return queryResult.docs.map((doc) => {
-      return { ...doc.data(), postId: doc.id } as PostData;
+      const data = doc.data();
+
+      return {
+        ...(data as PostData),
+        postId: doc.id,
+        createdAt: timestampToDate(data.createdAt),
+        updatedAt: timestampToDate(data.updatedAt), 
+      } as PostData;
     });
 
   } catch (error) {
@@ -148,12 +156,15 @@ export const getAllPosts = async () => {
 // Hent post med ID
 export const getPostById = async (id: string) => {
   const specificPost = await getDoc(doc(db, COLLECTION_NAME, id));
+  const data = specificPost.data();
 
   console.log(`🛜 Got post with spesific id: ${specificPost.id}`);
 
   return {
-    ...specificPost.data(),
+    ...(data as PostData),
     postId: specificPost.id,
+    createdAt: timestampToDate(data?.createdAt),
+    updatedAt: timestampToDate(data?.updatedAt),
   } as PostData;
 };
 
@@ -213,7 +224,16 @@ export const getRemoteFilteredPosts = async (location: InjuryLocation | null) =>
 
   const snapshot = await getDocs(postsQuery);
 
-  let posts: PostData[] = snapshot.docs.map((doc) => ({ postId: doc.id, ...(doc.data() as PostData) }));
+  let posts: PostData[] = snapshot.docs.map((doc) => {
+    const data = doc.data();
+
+    return {
+      ...(data as PostData),
+      postId: doc.id,
+      createdAt: timestampToDate(data.createdAt),
+      updatedAt: timestampToDate(data.updatedAt),
+    } as PostData;
+  });
 
   return posts;
 };
@@ -224,20 +244,29 @@ export const getLocalSearchedPosts = async (searchQuery: string = '') => {
 
   const snapshot = await getDocs(q);
 
-  let posts = snapshot.docs.map((doc) => ({ postId: doc.id, ...(doc.data() as PostData) }));
+  let posts = snapshot.docs.map((doc) => {
+    const data = doc.data();
+
+    return {
+      ...(data as PostData),
+      postId: doc.id,
+      createdAt: timestampToDate(data.createdAt),
+      updatedAt: timestampToDate(data.updatedAt),
+    } as PostData;
+  });
 
   // Søker lokalt
   if (searchQuery.trim()) {
     const lowerQuery = searchQuery.toLowerCase();
 
     posts = posts.filter((post) => {
-        const description = post.description ?? '';
-        return (
-          post.injuryLocation.toLowerCase().includes(lowerQuery) ||
-          post.statusIndicator.toLowerCase().includes(lowerQuery) ||
-          post.statusExplanation.toLowerCase().includes(lowerQuery) ||
-          description.toLowerCase().includes(lowerQuery)
-        )
+      const description = post.description ?? '';
+      return (
+        post.injuryLocation.toLowerCase().includes(lowerQuery) ||
+        post.statusIndicator.toLowerCase().includes(lowerQuery) ||
+        post.statusExplanation.toLowerCase().includes(lowerQuery) ||
+        description.toLowerCase().includes(lowerQuery)
+      );
     });
   }
 

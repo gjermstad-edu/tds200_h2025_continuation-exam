@@ -32,8 +32,8 @@ export interface PostData {
   statusExplanation: string;
 
   // timestamps
-  createdAt?: Timestamp | FieldValue | null;
-  updatedAt?: Timestamp | FieldValue | null;
+  createdAt?: Date | null;
+  updatedAt?: Date| null;
 
   // (legacy fields)
   title?: string;
@@ -45,6 +45,11 @@ export interface PostData {
   address?: string;
   coordinates?: { latitude: number; longitude: number };
 }
+
+export type PostDataFirestore = Omit<PostData, "createdAt" | "updatedAt"> & {
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
+};
 
 export type CreatePostInput = {
   title: string;

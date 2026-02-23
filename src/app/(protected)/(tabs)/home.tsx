@@ -203,6 +203,9 @@ export default function Index() {
             value={InjuryLocation.Other}
           />
         </Picker>
+        <Text className="py-1 font-bold">
+          Dine registrerte skadeobservasjoner:
+        </Text>
       </View>
 
       {/* Flatlist shows list of posts with like functionality
