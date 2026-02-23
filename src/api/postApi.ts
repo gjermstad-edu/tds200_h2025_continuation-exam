@@ -9,6 +9,7 @@ import {
   where,
   setDoc,
   serverTimestamp,
+  orderBy,
 } from 'firebase/firestore';
 import { auth, db } from 'root/firebaseConfig';
 
@@ -123,14 +124,25 @@ export const createPost = async (post: CreatePostInput) => {
 
 // Hent alle poster fra databasen
 export const getAllPosts = async () => {
-  const postsRef = collection(db, COLLECTION_NAME);
-  const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
+  try {
+    const postsRef = collection(db, COLLECTION_NAME);
+    const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
 
-  const queryResult = await getDocs(postsQuery);
+    const queryResult = await getDocs(postsQuery);
 
-  return queryResult.docs.map((doc) => {
-    return { ...doc.data(), postId: doc.id } as PostData;
-  });
+    console.log("DEBUG getAllPosts size:", queryResult.size);
+    queryResult.docs.slice(0, 3).forEach((docSnap) => {
+      console.log("DEBUG post:", docSnap.id, docSnap.data()?.createdAt);
+    });
+
+    return queryResult.docs.map((doc) => {
+      return { ...doc.data(), postId: doc.id } as PostData;
+    });
+
+  } catch (error) {
+    console.error("🚨 getAllPosts failed:", error);
+    return [];
+  }
 };
 
 // Hent post med ID
@@ -178,7 +190,10 @@ export const updatePost = async (postId: string, updateData: Partial<PostData>) 
   try {
     const postRef = doc(db, COLLECTION_NAME, postId);
 
-    await updateDoc(postRef, updateData);
+    await updateDoc(postRef, {
+      ...updateData,
+      updatedAt: serverTimestamp() as any,
+    });
 
     console.log(`👍 Post ${postId} updated successfully! [from postApi.ts/updatePost]`);
   } catch (error) {
@@ -189,27 +204,27 @@ export const updatePost = async (postId: string, updateData: Partial<PostData>) 
 };
 
 // Hent poster filtrert på kategorie (remote)
-export const getRemoteFilteredPosts = async (location: InjuryLocation) => {
-  let q = query(collection(db, COLLECTION_NAME));
+export const getRemoteFilteredPosts = async (location: InjuryLocation | null) => {
+  let postsRef = collection(db, COLLECTION_NAME);
 
-  if (location.length >= 1) {
-    q = query(q, where('injuryLocation', 'in', location));
-  }
+  const postsQuery = location
+    ? query(postsRef, where("injuryLocation", "==", location), orderBy("createdAt", "desc"))
+    : query(postsRef, orderBy("createdAt", "desc"));
 
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(postsQuery);
 
-  let posts: PostData[] = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as PostData) }));
+  let posts: PostData[] = snapshot.docs.map((doc) => ({ postId: doc.id, ...(doc.data() as PostData) }));
 
   return posts;
 };
 
 // Hent poster filtrert på tekst (lokalt)
 export const getLocalSearchedPosts = async (searchQuery: string = '') => {
-  let q = query(collection(db, COLLECTION_NAME));
+  let q = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
 
   const snapshot = await getDocs(q);
 
-  let posts = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as PostData) }));
+  let posts = snapshot.docs.map((doc) => ({ postId: doc.id, ...(doc.data() as PostData) }));
 
   // Søker lokalt
   if (searchQuery.trim()) {

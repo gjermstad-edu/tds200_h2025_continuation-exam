@@ -18,8 +18,13 @@ import PostForm from "@/components/PostForm";
 import { PostData } from "@/models/PostData";
 import Post from "@/components/Post";
 import Spacer from "@/components/Spacer";
-import { PostCategory } from "@/models/PostCategories";
+import {
+  InjuryLocation,
+  injuryLocationLabel,
+  PostCategory,
+} from "@/models/PostCategories";
 import { useAuthContext } from "@/providers/authContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // TODO import Toast from "react-native-toast-message";
 
@@ -36,14 +41,14 @@ export default function Index() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWelcomeShowing, setIsWelcomeShowing] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [filterCategories, setFilterCategories] = useState<PostCategory[]>([]);
+  const [filterCategories, setFilterCategories] =
+    useState<InjuryLocation | null>(null);
 
   // Hent alle poster
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
-        await getPostsFromBackend();
+        await getPostsFromBackend(filterCategories);
       };
       fetchData();
     }, []),
@@ -58,7 +63,9 @@ export default function Index() {
   }, [filterCategories]);
 
   // 2) Filter - Finner posts basert på valgt kategori
-  const getPostsFromBackend = async (category: PostCategory[] = []) => {
+  const getPostsFromBackend = async (
+    category: InjuryLocation | null = null,
+  ) => {
     const filteredPosts = await postApi.getRemoteFilteredPosts(category);
     setAllPosts(filteredPosts);
     setPosts(filteredPosts);
@@ -97,25 +104,29 @@ export default function Index() {
         className="bg-sky-600 p-3 rounded-lg items-center"
         onPress={() => setIsModalOpen(true)}
       >
-        <Text className="text-white font-semibold text-lg">Nytt innlegg</Text>
+        <Text className="text-white font-semibold text-lg">
+          Ny skadeobservasjon
+        </Text>
       </Pressable>
 
       {/* Modal for PostForm */}
       <Modal visible={isModalOpen} animationType="slide">
-        <PostForm
-          addNewPost={async (post) => {
-            try {
-              await postApi.createPost(post);
-              await getPostsFromBackend();
-              setIsModalOpen(false);
-              // TODO showToast("success", "Innlegg lagt til!");
-            } catch (error) {
-              console.error("Error saving posts to SecureStore:", error);
-              // TODO showToast("error", "Kunne ikke lagre innlegget", String(error));
-            }
-          }}
-          closeModal={() => setIsModalOpen(false)}
-        />
+        <SafeAreaView style={{ flex: 1 }}>
+          <PostForm
+            addNewPost={async (post) => {
+              try {
+                await postApi.createPost(post);
+                await getPostsFromBackend();
+                setIsModalOpen(false);
+                // TODO showToast("success", "Innlegg lagt til!");
+              } catch (error) {
+                console.error("Error saving posts to SecureStore:", error);
+                // TODO showToast("error", "Kunne ikke lagre innlegget", String(error));
+              }
+            }}
+            closeModal={() => setIsModalOpen(false)}
+          />
+        </SafeAreaView>
       </Modal>
 
       {/* conditional rendering of welcome message if userName exists */}
@@ -132,25 +143,65 @@ export default function Index() {
         </View>
       )}
 
-      <View className="w-full px-5 mt-4">
+      <View className="w-full px-5 my-4">
         {/* Search bar */}
+        <Text className="py-1 font-bold">Søk i skadeobservasjonene dine:</Text>
         <TextInput
-          placeholder="Search posts..."
+          placeholder="Skriv søkeord her..."
           value={searchQuery}
           onChangeText={setSearchQuery}
-          className="bg-white border border-gray-300 rounded-lg p-2 mb-3"
+          className="bg-white border border-gray-300 text-gray-400 rounded-lg p-2 mb-3"
         />
 
         {/* Category filter */}
+        <Text className="py-1 font-bold">
+          Filtrer skadeobservasjoner på skade:
+        </Text>
         <Picker
-          selectedValue={selectedCategory}
-          onValueChange={(value) => setSelectedCategory(value)}
-          style={{ backgroundColor: "white", borderRadius: 8 }}
+          className="bg-white border border-gray-300 rounded-lg p-2 mb-3"
+          selectedValue={filterCategories ?? ""}
+          onValueChange={(value) => {
+            // hvis tom streng -> null (ingen filter)
+            setFilterCategories(value ? (value as InjuryLocation) : null);
+          }}
         >
-          <Picker.Item label="All categories" value="" />
-          <Picker.Item label="Art" value="Art" />
-          <Picker.Item label="Nature" value="Nature" />
-          <Picker.Item label="Education" value="Education" />
+          <Picker.Item label="Alle skader" value="" />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Elbow)}
+            value={InjuryLocation.Elbow}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Ankle)}
+            value={InjuryLocation.Ankle}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Hip)}
+            value={InjuryLocation.Hip}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Wrist)}
+            value={InjuryLocation.Wrist}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Knee)}
+            value={InjuryLocation.Knee}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Neck)}
+            value={InjuryLocation.Neck}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Back)}
+            value={InjuryLocation.Back}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Shoulder)}
+            value={InjuryLocation.Shoulder}
+          />
+          <Picker.Item
+            label={injuryLocationLabel(InjuryLocation.Other)}
+            value={InjuryLocation.Other}
+          />
         </Picker>
       </View>
 
