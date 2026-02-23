@@ -51,10 +51,12 @@ export type CreatePostInput = {
   description?: string;
   images: string[];
   injuryLocation: InjuryLocation;
-  painLevel: number; // 0-10
+  painLevel: number;
   swelling: boolean;
   mobilityLimit: boolean;
-  temperature: number; // 34-42
+  temperature: number;
+  statusIndicator: InjuryStatus;
+  statusExplanation: string;
 };
 
 export interface CommentObject {
