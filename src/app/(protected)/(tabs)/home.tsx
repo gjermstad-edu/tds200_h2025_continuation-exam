@@ -87,7 +87,7 @@ export default function Index() {
     const lowerQuery = searchQuery.toLowerCase();
     const locallyFiltered = allPosts.filter(
       (p) =>
-        p.title.toLowerCase().includes(lowerQuery) ||
+        p.injuryLocation.toLowerCase().includes(lowerQuery) ||
         (p.description && p.description.toLowerCase().includes(lowerQuery)),
     );
     setPosts(locallyFiltered);
