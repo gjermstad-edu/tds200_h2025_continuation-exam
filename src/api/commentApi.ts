@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 
 import { CommentData, CommentObject } from '@/models/PostData';
+import { timestampToDate } from '@/util/timestampToDate';
 
 /*
 / Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -54,12 +55,26 @@ export const getCommentsByIds = async (ids: string[]) => {
 
     for (const id of ids) {
       const docSnap = await getDoc(doc(db, 'comments', id));
+
       if (docSnap.exists()) {
-        comments.push({ id: docSnap.id, comment: docSnap.data() } as CommentObject);
+        comments.push({ 
+          id: docSnap.id, 
+          comment: docSnap.data() 
+        } as CommentObject);
       }
     }
 
-    return comments;
+    return comments.map((comment) => {
+      const data = comment.comment;
+      return{
+        ...comment as CommentObject,
+        comment: {
+          ...data,
+          createdAt: timestampToDate(data.createdAt)
+        }
+      };
+    });
+
   } catch (error) {
     console.error(`🚨 Error getting comments: ${error} [from commentAPI.ts/getCommentsByIds]`);
     return [];

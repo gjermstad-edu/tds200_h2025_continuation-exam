@@ -1,10 +1,11 @@
+import { Timestamp } from "firebase/firestore";
 import React from "react";
 import { Text } from "react-native";
 
 type DateTimeVariant = "full" | "date" | "time";
 
 type PostDateProps = {
-  value?: Date | null;
+  value?: Date | Timestamp | null;
   variant?: DateTimeVariant;
 };
 
@@ -21,6 +22,8 @@ export const formatDateTimeFull = (value: Date) =>
 
 export default function PostDate({ value, variant = "full" }: PostDateProps) {
   if (!value) return <Text>—</Text>;
+
+  const dateValue = value instanceof Timestamp ? value.toDate() : value;
 
   const formatterByVariant: Record<DateTimeVariant, (date: Date) => string> = {
     full: formatDateTimeFull,

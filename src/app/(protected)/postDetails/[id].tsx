@@ -209,7 +209,7 @@ export default function PostDetails() {
             <View className="min-h-24">
               {postComments.length === 0 && (
                 <Text className="italic">
-                  Her kan du skrive egne notater rundt oppføringen
+                  Ingen notater enda – legg til et for å følge utviklingen din.
                 </Text>
               )}
               {postComments.map((item) => (
@@ -226,7 +226,7 @@ export default function PostDetails() {
                     <View className="h-[1px] bg-gray-200 my-1" />
 
                     <Text className="text-xs text-gray-500">
-                      Skrevet <PostDate value={post.createdAt} />
+                      Skrevet <PostDate value={item.comment.createdAt} />
                     </Text>
                   </View>
 
@@ -264,7 +264,7 @@ export default function PostDetails() {
               {isLoadingAddComment ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text className="text-white font-medium">Publiser</Text>
+                <Text className="text-white font-medium">Lagre notat</Text>
               )}
             </Pressable>
           </View>
