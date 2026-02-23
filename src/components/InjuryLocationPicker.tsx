@@ -20,7 +20,7 @@ export default function InjuryLocationPicker({
         if (!value) return;
         onChange(value as InjuryLocation);
       }}
-      style={{ backgroundColor: "white", borderRadius: 8 }}
+      className="bg-white border border-gray-300 rounded-lg p-2"
     >
       <Picker.Item label="Velg skadelokasjon..." value="" />
 

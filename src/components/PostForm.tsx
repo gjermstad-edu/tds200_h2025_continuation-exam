@@ -113,13 +113,14 @@ export default function PostForm({ addNewPost, closeModal }: PostFormProps) {
             </ScrollView>
           )}
 
+          {/* GRUNNINFO */}
           <Text className="mb-6 font-bold text-xl">
             Grunnleggende skadeindikatorer (påkrevd):
           </Text>
           {/* Skadelokasjon (injuryLocation) */}
           <View className="my-4 w-full lg:w-1/3">
             <Text className="text-gray-700 font-bold mb-1">Skadelokasjon:</Text>
-            <View className="ml-4">
+            <View className="">
               <InjuryLocationPicker
                 selectedLocation={selectedInjury}
                 onChange={setSelectedInjury}
