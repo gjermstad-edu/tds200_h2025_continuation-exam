@@ -13,15 +13,15 @@ export default function Header() {
   return (
     <View style={{ paddingTop: top }}>
       <View className="px-4 lg:px-6 h-14 flex items-center flex-row bg-white border-b border-gray-200">
-        <Text className="font-bold text-lg mr-2">📦</Text>
+        <Text className="font-bold text-lg mr-2">🤕</Text>
         <Link className="font-bold flex-1 text-lg" href="/">
-          Firma
+          RehabTrace
         </Link>
         <View className="flex flex-row items-center gap-4 sm:gap-6">
           {firebaseUser && (
-            <View className="mt-6">
+            <View>
               <Pressable
-                className="bg-red-500 p-1 rounded-lg"
+                className="bg-red-500 rounded-lg p-1"
                 onPress={async () => {
                   try {
                     await signOut();
