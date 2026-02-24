@@ -19,6 +19,7 @@ export default function Header() {
   return (
     <View style={{ paddingTop: top }}>
       <View className="px-4 lg:px-6 h-14 flex items-center flex-row bg-white border-b border-gray-200">
+        {/* Tilbake-knapp om på [id]-detaljesiden */}
         {showBackButton ? (
           <Pressable
             onPress={() => router.back()}
@@ -33,29 +34,6 @@ export default function Header() {
         <Link className="font-bold flex-1 text-lg" href="/">
           RehabTrace
         </Link>
-        <View className="flex flex-row items-center gap-4 sm:gap-6">
-          {firebaseUser && (
-            <View>
-              <Pressable
-                className="bg-red-500 rounded-lg p-1"
-                onPress={async () => {
-                  try {
-                    await signOut();
-                    // TODO: showToast("success", "Logget ut!");
-                    console.info(`User signed out.`);
-                  } catch (error: any) {
-                    // TODO: showToast("error", "Feil ved utlogging", error.message);
-                    console.error(error?.message);
-                  }
-                }}
-              >
-                <Text className="text-white font-semibold text-lg">
-                  Logg ut
-                </Text>
-              </Pressable>
-            </View>
-          )}
-        </View>
       </View>
     </View>
   );
