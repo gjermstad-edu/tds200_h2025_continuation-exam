@@ -1,7 +1,6 @@
 import React from "react";
 import { Redirect, Stack } from "expo-router";
 import { useAuthContext } from "@/providers/authContext";
-import Header from "@/components/Header";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function ProtectedLayout() {
@@ -23,15 +22,6 @@ export default function ProtectedLayout() {
         name="(tabs)"
         options={{
           headerShown: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="postDetails/[id]"
-        options={{
-          headerShown: true,
-          title: "Postdetaljer",
-          headerBackButtonDisplayMode: "generic",
         }}
       />
     </Stack>

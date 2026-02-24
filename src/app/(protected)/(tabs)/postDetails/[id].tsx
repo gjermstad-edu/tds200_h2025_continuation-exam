@@ -8,7 +8,6 @@ import {
   Image,
   ScrollView,
   useWindowDimensions,
-  Button,
 } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -125,20 +124,25 @@ export default function PostDetails() {
   return (
     <>
       <View className="flex-1 bg-gray-50">
-        <Stack.Screen
-          options={{
-            title: post.title,
-            headerBackButtonDisplayMode: "generic",
-          }}
-        />
-
         <ScrollView contentContainerClassName="p-5">
           {/* Post content */}
+
           <View className="bg-white rounded-2xl shadow-md p-6 mb-6">
-            {/* Detaljeinfo */}
-            <Text className="text-xl font-extrabold text-gray-900 mb-3">
-              Skadeindikatorer
+            <Text className="text-2xl font-extrabold text-gray-900 mb-3">
+              Skadeoppføring
             </Text>
+
+            <View className="bg-green-100 border border-green-300 rounded-xl p-4 mb-4">
+              <Text className="text-lg">
+                <Text>
+                  Skadestatus:{" "}
+                  <Text className="font-bold">{post.statusIndicator}</Text>
+                </Text>
+              </Text>
+              <Text className="text-sm mt-1">{post.statusExplanation}</Text>
+            </View>
+
+            {/* Detaljeinfo */}
             <Text className="text-base font-extrabold text-gray-900 mb-3">
               Skadelokasjon: {post?.injuryLocation}
             </Text>
@@ -174,7 +178,7 @@ export default function PostDetails() {
             )}
             {/* Post lagd av */}
             <Text className="text-gray-500 text-sm font-bold italic">
-              Skadeoppføring registrert
+              Skadeoppføring registrert: <PostDate value={post.createdAt} />
             </Text>
           </View>
 
@@ -203,7 +207,7 @@ export default function PostDetails() {
           {/* Kommentarer */}
           <Text className="text-xl font-semibold my-3">Egne notater</Text>
 
-          {isLoadingComments && !postComments ? (
+          {isLoadingComments ? (
             <ActivityIndicator size="large" />
           ) : (
             <View className="min-h-24">

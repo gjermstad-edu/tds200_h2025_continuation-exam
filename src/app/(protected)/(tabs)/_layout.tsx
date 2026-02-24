@@ -38,6 +38,15 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="postDetails/[id]"
+        options={{
+          href: null,
+          headerShown: true,
+          title: "Postdetaljer",
+          headerBackButtonDisplayMode: "generic",
+        }}
+      />
     </Tabs>
   );
 }

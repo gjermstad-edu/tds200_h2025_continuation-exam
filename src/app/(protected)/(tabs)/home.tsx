@@ -31,25 +31,18 @@ export default function Index() {
   const [filterCategories, setFilterCategories] =
     useState<InjuryLocation | null>(null);
 
-  // Hent alle poster
+  // 1) Hent alle poster
   useFocusEffect(
     useCallback(() => {
+      if (!firebaseUser) return;
+
       const fetchData = async () => {
         await getPostsFromBackend(filterCategories);
       };
+
       fetchData();
     }, [firebaseUser, filterCategories]),
   );
-
-  // 1) Filter - Følger med på om valgte filter endrer seg
-  useEffect(() => {
-    if (!firebaseUser) return;
-
-    const fetchFiltered = async () => {
-      await getPostsFromBackend(filterCategories);
-    };
-    fetchFiltered();
-  }, [firebaseUser, filterCategories]);
 
   // 2) Filter - Finner posts basert på valgt kategori
   const getPostsFromBackend = async (
@@ -61,6 +54,10 @@ export default function Index() {
     setAllPosts(filteredPosts);
     setPosts(filteredPosts);
   };
+  // 2.5) Tømmer søkefeltet om skade man filtrerer på endres
+  useEffect(() => {
+    setSearchQuery("");
+  }, [filterCategories]);
 
   // Hook for å utføre søk på posts
   useEffect(() => {
