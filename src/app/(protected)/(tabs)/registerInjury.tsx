@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 
@@ -21,6 +22,7 @@ import InjuryLocationPicker from "@/components/InjuryLocationPicker";
 import { NumberPicker } from "@/components/NumberPicker";
 import { router } from "expo-router";
 import { calculateStatus } from "@/util/calculateStatusIndicator";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Index() {
   // This component is a post creation form that lets users:
@@ -46,6 +48,8 @@ export default function Index() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isReadyToSave, setIsReadyToSave] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isStatusWaiting, setIsStatusWaiting] = useState(false);
+  const [isSavingWaiting, setIsSavingWaiting] = useState(false);
   const [formIsChanged, setFormIsChanged] = useState(true);
 
   const { firebaseUser, userProfile } = useAuthContext();
@@ -58,7 +62,7 @@ export default function Index() {
 
   // Logikken for å beregne status
   async function handleStatus(oldPosts: PostData[]) {
-    console.log("Running handleStatus");
+    setIsStatusWaiting(true);
     const calculatedStatus = await calculateStatus(
       selectedInjury,
       painLevel,
@@ -73,6 +77,7 @@ export default function Index() {
 
     setFormIsChanged(false);
     setIsReadyToSave(true);
+    setIsStatusWaiting(false);
   }
 
   // Lagrer skadeskjema
@@ -80,6 +85,7 @@ export default function Index() {
     // Ekstra sikkerhet (selv om disabled dekker det meste)
     if (!isReadyToSave || isSaving) return;
 
+    setIsSavingWaiting(true);
     setIsSaving(true);
 
     try {
@@ -101,8 +107,9 @@ export default function Index() {
       router.replace("/home");
     } catch (error) {
       console.error("Error saving posts:", error);
-      // TODO showToast("error", "Kunne ikke lagre innlegget", String(error));
+      // TODO showToast("error", "Kunne ikke lagre skjema", String(error));
     } finally {
+      setIsSavingWaiting(false);
       setIsSaving(false);
     }
   };
@@ -124,6 +131,18 @@ export default function Index() {
     setFormIsChanged(true);
   }
 
+  // Setter farge for statusboksen
+  const statusBoxStyleByStatus: Record<string, string> = {
+    "ny skade": "bg-orange-100 border-orange-300",
+    forbedres: "bg-green-100 border-green-300",
+    stabil: "bg-yellow-100 border-yellow-300",
+    forverres: "bg-red-100 border-red-300",
+    frisk: "bg-emerald-100 border-emerald-300",
+  };
+  const statusBoxClass =
+    statusBoxStyleByStatus[statusIndicatorStatus] ??
+    "bg-gray-100 border-gray-300";
+
   return (
     <View className="flex-1 bg-gray-100">
       <ScrollView
@@ -132,8 +151,11 @@ export default function Index() {
         className="px-6 py-8"
       >
         {/* Form container */}
-        <View className="bg-white rounded-2xl shadow-md p-6">
-          <Text className="mb-6 font-bold text-4xl">Registrer ny skade</Text>
+        <View className="bg-white rounded-2xl shadow-md p-6 mb-5">
+          <Text className="font-bold text-4xl">Ny oppføring</Text>
+          <Text className="mb-6 font-light text-xl">
+            Registrer en skadeobservasjon
+          </Text>
 
           {/* Camera Modal */}
           {/* Note that multiple images can be added to a post. 
@@ -230,7 +252,7 @@ export default function Index() {
             <Text className="text-gray-700 font-semibold">
               Er det hevelse på/rundt skaden?
             </Text>
-            <View className="flex-1 flex-row items-baseline">
+            <View className="flex-row items-baseline  mt-2 ml-4">
               <Text className="mr-4">
                 {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
               </Text>
@@ -239,7 +261,7 @@ export default function Index() {
                   setIsSwelling(!isSwelling);
                   setFormIsChanged(true);
                 }}
-                className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
+                className="min-w-[72px] px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
               >
                 <Text className="text-blue-700 font-semibold">Endre</Text>
               </Pressable>
@@ -251,7 +273,7 @@ export default function Index() {
             <Text className="text-gray-700 font-semibold">
               Har du begrensning i bevegelse av skaden?
             </Text>
-            <View className="flex-1 flex-row items-baseline">
+            <View className="flex-row items-baseline mt-2 ml-4">
               <Text className="mr-4">
                 {isMobilityLimited
                   ? "JA, jeg har begrensning"
@@ -270,9 +292,9 @@ export default function Index() {
           </View>
 
           {/* Temperatur */}
-          <View className="my-4 w-full">
+          <View className="mb-4 w-full">
             <Text className="text-gray-700 font-semibold mb-1">
-              Hvilken temperatur har du (velg nærmeste hele tall)?:
+              Hvilken temperatur har du (nærmeste tall)?:
             </Text>
             <View className="ml-4">
               <NumberPicker
@@ -317,72 +339,81 @@ export default function Index() {
                 !readyForStatus ? "bg-gray-300" : "bg-emerald-600"
               }`}
               onPress={async () => {
-                alert("Status is being calculated, please wait ☀️");
-
                 const oldPosts =
                   await postApi.getRemoteFilteredPosts(selectedInjury);
 
                 await handleStatus(oldPosts);
               }}
             >
-              <Text
-                className={`font-semibold text-center ${
-                  !readyForStatus ? "text-black" : "text-white"
-                }`}
-              >
-                Beregn status
-              </Text>
+              {isStatusWaiting ? (
+                <View className="flex-row items-center justify-center">
+                  <ActivityIndicator color="white" />
+                  <Text className="text-white font-semibold ml-2">
+                    Beregner...
+                  </Text>
+                </View>
+              ) : (
+                <Text
+                  className={`font-semibold text-center ${
+                    !readyForStatus ? "text-black" : "text-white"
+                  }`}
+                >
+                  Beregn status
+                </Text>
+              )}
             </Pressable>
 
             {formIsChanged == false && (
-              <View className="bg-green-100 border border-green-300 rounded-xl p-4 mt-4">
-                <Text className="text-green-700 text-lg">
+              <View className={`${statusBoxClass} border rounded-xl p-4 mt-4`}>
+                <Text className="text-lg">
                   <Text>
                     Skadestatus:{" "}
                     <Text className="font-bold">{statusIndicatorStatus}</Text>
                   </Text>
                 </Text>
-                <Text className="text-green-600 text-sm mt-1">
-                  {statusExplaination}
-                </Text>
+                <Text className="text-sm mt-1">{statusExplaination}</Text>
               </View>
             )}
           </View>
 
           {/* KNAPP: Lagre og Avbryt */}
-          <View>
-            <Text className="font-bold text-xl">Lagre / Resett skjema</Text>
-            <View className="flex-row justify-between">
-              <Pressable
-                className={`flex-1 py-3 border border-gray-400 rounded-lg mr-2 ${
-                  isDisabled ? "bg-gray-300" : "bg-emerald-600"
-                }`}
-                disabled={isDisabled}
-                onPress={handleSave}
-              >
-                <Text
-                  className={`font-semibold text-center ${
-                    isDisabled ? "text-black" : "text-white"
+          {isSavingWaiting ? (
+            <LoadingScreen line1="Lagrer skadeobservasjon" />
+          ) : (
+            <View>
+              <Text className="font-bold text-xl">Lagre / Resett skjema</Text>
+              <View className="flex-row justify-between">
+                <Pressable
+                  className={`flex-1 py-3 border border-gray-400 rounded-lg mr-2 ${
+                    isDisabled ? "bg-gray-300" : "bg-emerald-600"
                   }`}
+                  disabled={isDisabled}
+                  onPress={handleSave}
                 >
-                  {isDisabled ? "Beregn status for å lagre" : "Lagre"}
-                </Text>
-              </Pressable>
+                  <Text
+                    className={`font-semibold text-center ${
+                      isDisabled ? "text-black" : "text-white"
+                    }`}
+                  >
+                    {isDisabled ? "Beregn status for å lagre" : "Lagre"}
+                  </Text>
+                </Pressable>
 
-              {/* TODO: Sett inn toast istedenfor alert */}
-              <Pressable
-                className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
-                onPress={() => {
-                  resetFields();
-                  alert("Skjema er tilbakestilt.");
-                }}
-              >
-                <Text className="text-white font-semibold text-center">
-                  Reset skjema
-                </Text>
-              </Pressable>
+                {/* TODO: Sett inn toast istedenfor alert */}
+                <Pressable
+                  className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
+                  onPress={() => {
+                    resetFields();
+                    alert("Skjema er tilbakestilt.");
+                  }}
+                >
+                  <Text className="text-white font-semibold text-center">
+                    Reset skjema
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
+          )}
         </View>
       </ScrollView>
     </View>

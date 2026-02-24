@@ -3,7 +3,15 @@ import { View, ActivityIndicator, Text } from "react-native";
 
 // Liten laste-skjerm for å vite at Auth laster så det ikke virker som om den henger :)
 
-export default function LoadingScreen() {
+type LoadingProps = {
+  line1?: string;
+  line2?: string;
+};
+
+export default function LoadingScreen({
+  line1 = "Laster inn siden...",
+  line2 = "Vennligst vent ☀️",
+}: LoadingProps) {
   return (
     <View
       style={{
@@ -14,8 +22,8 @@ export default function LoadingScreen() {
       }}
     >
       <ActivityIndicator size="large" />
-      <Text>Laster inn siden...</Text>
-      <Text>Vennligst vent ☀️</Text>
+      <Text>{line1}</Text>
+      <Text>{line2}</Text>
     </View>
   );
 }
