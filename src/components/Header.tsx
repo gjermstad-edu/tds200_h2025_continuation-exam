@@ -4,11 +4,8 @@ import { Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import { useAuthContext } from "@/providers/authContext";
-
 export default function Header() {
   const { top } = useSafeAreaInsets();
-  const { firebaseUser, signOut } = useAuthContext();
 
   // legger til tilbake-knapp på [id]-detaljesiden
   const pathname = usePathname();
