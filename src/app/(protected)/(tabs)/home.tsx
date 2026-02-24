@@ -92,17 +92,21 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 flex-col px-5 pt-5 items-center bg-gray-50">
+    <View className="flex-1 flex-col px-5 items-center bg-gray-100">
+      <View className="w-full px-5 mt-4 py-2">
+        <Text className="font-bold text-2xl">Skadeobservasjoner</Text>
+      </View>
       {/* FILTRERING */}
-      <Pressable
-        onPress={toggleShowFilter}
-        className="p-2 mx-4 rounded-lg items-center border-gray-400 border-2"
-      >
-        <Text className=" font-bold">
-          {isShowFilters ? "🔍 Skjul" : "🔍 Søk & filtrer"}
-        </Text>
-      </Pressable>
-
+      <View className="w-full">
+        <Pressable
+          onPress={toggleShowFilter}
+          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-400 border-2"
+        >
+          <Text className=" font-bold">
+            {isShowFilters ? "🔍 Skjul" : "🔍 Søk & filtrer"}
+          </Text>
+        </Pressable>
+      </View>
       {isShowFilters && (
         <View className="w-full px-5 my-4">
           {/* Search bar */}
@@ -168,17 +172,6 @@ export default function Index() {
           </Picker>
         </View>
       )}
-      <View className="w-full px-5 mt-4">
-        {userProfile?.firstName ? (
-          <Text className="font-bold text-xl">
-            Dine registrerte skadeobservasjoner {userProfile?.firstName}:
-          </Text>
-        ) : (
-          <Text className="font-bold text-xl">
-            Dine registrerte skadeobservasjoner:
-          </Text>
-        )}
-      </View>
 
       {/* Flatlist shows list of posts with like functionality
       It renders Post component for each post */}

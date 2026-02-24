@@ -9,6 +9,7 @@ import { useAuthContext } from "@/providers/authContext";
 
 // TODO import Toast from "react-native-toast-message";
 import PostDate from "./PostDate";
+import TextChip from "./TextChip";
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -83,51 +84,54 @@ export default function Post({ postData, refreshPosts }: PostProps) {
   // Post component displays individual post with title, description, hashtags, author, and like button.
   // Note that Tailwind utility classes are used for styling.
   return (
-    <View className="bg-white border-gray-400 border rounded-2xl mb-4 overflow-hidden">
-      {/* Innhold */}
-      <Link
-        href={{
-          pathname: "/postDetails/[id]",
-          params: { id: postData.postId },
-        }}
-        className="flex-1"
-      >
-        <View className="flex-1 flex-row w-full items-center p-4">
-          <View className="flex-1 flex-col">
-            {/* Info */}
+    <View className="mb-4 rounded-2xl bg-white shadow-slate-100 shadow-sm">
+      <View className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        {/* Innhold */}
+        <Link
+          href={{
+            pathname: "/postDetails/[id]",
+            params: { id: postData.postId },
+          }}
+          className="flex-1"
+        >
+          <View className="flex-1 flex-row w-full items-center p-4">
+            <View className="flex-1 flex-col">
+              {/* Info */}
 
-            <View>
-              <Text className="text-xl font-extrabold text-gray-800">
-                {postData.injuryLocation.toString().charAt(0).toUpperCase() +
-                  postData.injuryLocation.toString().slice(1)}{" "}
-                [{postData.statusIndicator}]
-              </Text>
+              <View className="flex-row items-center gap-2 flex-wrap">
+                <Text className="text-xl font-extrabold text-gray-800">
+                  {postData.injuryLocation.toString().charAt(0).toUpperCase() +
+                    postData.injuryLocation.toString().slice(1)}
+                </Text>
+
+                <TextChip text={postData.statusIndicator} />
+              </View>
+            </View>
+
+            {/* Knapp for slett */}
+            <View className="flex-col justify-end items-center space-x-4">
+              {/* TODO Delete button (only if owner) */}
+              {/* {user?.uid === postData.ownerId && ( */}
+              <Pressable
+                onPress={createAlertDeletePost}
+                className="border-red-100 border-2 rounded-full p-3"
+              >
+                <Ionicons name="trash-outline" size={18} color="#ef4444" />
+              </Pressable>
+              {/* )} */}
             </View>
           </View>
 
-          {/* Knapp for slett */}
-          <View className="flex-col justify-end items-center space-x-4">
-            {/* TODO Delete button (only if owner) */}
-            {/* {user?.uid === postData.ownerId && ( */}
-            <Pressable
-              onPress={createAlertDeletePost}
-              className="bg-red-300 rounded-full p-2 active:bg-red-600"
-            >
-              <Ionicons name="trash-outline" size={22} color="white" />
-            </Pressable>
-            {/* )} */}
+          {/* TODO: Footer */}
+          <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
+            <View className="flex-row flex-wrap text-sm text-gray-500">
+              <Text>
+                <PostDate value={postData.createdAt} />
+              </Text>
+            </View>
           </View>
-        </View>
-
-        {/* TODO: Footer */}
-        <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
-          <View className="flex-row flex-wrap text-gray-600">
-            <Text>
-              <PostDate value={postData.createdAt} />
-            </Text>
-          </View>
-        </View>
-      </Link>
+        </Link>
+      </View>
     </View>
   );
 }
