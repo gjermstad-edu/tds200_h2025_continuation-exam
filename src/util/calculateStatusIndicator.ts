@@ -97,16 +97,16 @@ function setExplaination(sumPoints: number): string {
     let statusExplaination: string = "";
 
     if(sumPoints >0){
-        statusExplaination += "Din status siden sist er: FORBEDRET. "
+        statusExplaination += "Din status siden sist er: FORBEDRET.\“Dette går riktig vei."
     } else if (sumPoints == 0){
-        statusExplaination += "Din status siden sist er: STABIL. "
+        statusExplaination += "Din status siden sist er: STABIL.\nDet er bra, men om du har sterke smerter så kontakt lege."
     } else if (sumPoints < 0) {
-        statusExplaination += "Din status siden sist er: FORVERRET. "
+        statusExplaination += "Din status siden sist er: FORVERRET.\n- Har det pågått over 24 timer anbefales å kontakte lege."
     } else {
         statusExplaination += "ERROR: Noe gikk feil i beregningen - Kontakt kundeservice. "
     }
 
-    statusExplaination += "Beregnet basert på endringer i smerte, hevelse, mobilitet og temperatur siden forrige registrering."
+    statusExplaination += "\n\nBeregnet basert på en totalvurdering av endringer i smerte, hevelse, mobilitet og temperatur siden forrige registrering."
 
     return statusExplaination;
 }
