@@ -25,6 +25,7 @@ type PostProps = {
 export default function Post({ postData, refreshPosts }: PostProps) {
   const { firebaseUser } = useAuthContext();
 
+  // Sletter posten
   const handleDelete = async () => {
     try {
       await deletePost(postData.postId!);
@@ -36,6 +37,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
     }
   };
 
+  // Bekreftelse om brukeren ønsker å slette posten
   const createAlertDeletePost = () => {
     if (Platform.OS === "web") {
       const userAnswer = confirm(
@@ -81,7 +83,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
   // Post component displays individual post with title, description, hashtags, author, and like button.
   // Note that Tailwind utility classes are used for styling.
   return (
-    <View className="bg-white border-gray-400 border rounded-2xl mb-5 overflow-hidden">
+    <View className="bg-white border-gray-400 border rounded-2xl mb-4 overflow-hidden">
       {/* Innhold */}
       <Link
         href={{
@@ -119,7 +121,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
 
         {/* TODO: Footer */}
         <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
-          <View className="flex-row flex-wrap mb-3 text-gray-600">
+          <View className="flex-row flex-wrap text-gray-600">
             <Text>
               <PostDate value={postData.createdAt} />
             </Text>

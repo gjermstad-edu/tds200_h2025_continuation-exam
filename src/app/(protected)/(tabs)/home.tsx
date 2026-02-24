@@ -93,33 +93,13 @@ export default function Index() {
 
   return (
     <View className="flex-1 flex-col px-5 pt-5 items-center bg-gray-50">
-      {/* Modal for PostForm */}
-
-      {/* conditional rendering of welcome message if userName exists */}
-      {isWelcomeShowing && (
-        <View className="w-full px-5 mt-4">
-          <View className="bg-green-100 border border-green-300 rounded-xl p-4 shadow-sm">
-            <Text className="text-green-700 font-semibold text-lg">
-              {firebaseUser?.displayName ? (
-                <Text>Hei, {firebaseUser.displayName}!</Text>
-              ) : (
-                <Text>Hei!</Text>
-              )}
-            </Text>
-            <Text className="text-green-600 text-sm mt-1">
-              Velkommen tilbake – hyggelig å se deg igjen.
-            </Text>
-          </View>
-        </View>
-      )}
-
       {/* FILTRERING */}
       <Pressable
         onPress={toggleShowFilter}
-        className="p-2 mx-4 mt-4 rounded-lg items-center border-blue-800 border-2"
+        className="p-2 mx-4 rounded-lg items-center border-gray-400 border-2"
       >
         <Text className=" font-bold">
-          {isShowFilters ? "Skjul søk og filtrering" : "Vis søk og filtrering"}
+          {isShowFilters ? "🔍 Skjul" : "🔍 Søk & filtrer"}
         </Text>
       </Pressable>
 
@@ -189,7 +169,15 @@ export default function Index() {
         </View>
       )}
       <View className="w-full px-5 mt-4">
-        <Text className="font-bold">Dine registrerte skadeobservasjoner:</Text>
+        {userProfile?.firstName ? (
+          <Text className="font-bold text-xl">
+            Dine registrerte skadeobservasjoner {userProfile?.firstName}:
+          </Text>
+        ) : (
+          <Text className="font-bold text-xl">
+            Dine registrerte skadeobservasjoner:
+          </Text>
+        )}
       </View>
 
       {/* Flatlist shows list of posts with like functionality
@@ -200,7 +188,7 @@ export default function Index() {
           data={posts}
           ListHeaderComponent={() => <Spacer height={10} />}
           ListFooterComponent={() => <Spacer height={50} />}
-          ItemSeparatorComponent={() => <Spacer height={8} />}
+          ItemSeparatorComponent={() => <Spacer height={5} />}
           renderItem={(post) => (
             <Post postData={post.item} refreshPosts={getPostsFromBackend} />
           )}
