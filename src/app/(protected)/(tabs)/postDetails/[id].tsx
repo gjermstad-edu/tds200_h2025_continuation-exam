@@ -119,6 +119,28 @@ export default function PostDetails() {
   const firstImageUri = post?.images?.[0];
   const isTherePhoto = !!(firstImageUri && firstImageUri !== "ERROR");
 
+  // Setter farge for statusboksen
+  const statusBoxStyleByStatus: Record<string, string> = {
+    "ny skade": "bg-orange-100 border-orange-300",
+    forbedres: "bg-green-100 border-green-300",
+    stabil: "bg-yellow-100 border-yellow-300",
+    forverres: "bg-red-100 border-red-300",
+    frisk: "bg-emerald-100 border-emerald-300",
+  };
+  const statusBoxClass =
+    statusBoxStyleByStatus[post.statusIndicator] ??
+    "bg-gray-100 border-gray-300";
+
+  // Skademelding-inforad
+  function DetailRow({ label, value }: { label: string; value: string }) {
+    return (
+      <View className="flex-row justify-between mb-3">
+        <Text className="text-gray-500">{label}</Text>
+        <Text className="font-semibold text-gray-900">{value}</Text>
+      </View>
+    );
+  }
+
   // ----------------------------------------------------------------------------------------
 
   return (
@@ -127,59 +149,55 @@ export default function PostDetails() {
         <ScrollView contentContainerClassName="p-5">
           {/* Post content */}
 
-          <View className="bg-white rounded-2xl shadow-md p-6 mb-6">
-            <Text className="text-2xl font-extrabold text-gray-900 mb-3">
-              Skadeoppføring
-            </Text>
-
-            <View className="bg-green-100 border border-green-300 rounded-xl p-4 mb-4">
-              <Text className="text-lg">
-                <Text>
-                  Skadestatus:{" "}
-                  <Text className="font-bold">{post.statusIndicator}</Text>
-                </Text>
+          <View className="mb-6 rounded-2xl bg-white shadow-sm">
+            <View className="rounded-2xl bg-white border border-gray-200 overflow-hidden p-6">
+              <Text className="text-2xl font-extrabold text-gray-900 mb-3">
+                Skadeoppføring
               </Text>
-              <Text className="text-sm mt-1">{post.statusExplanation}</Text>
-            </View>
 
-            {/* Detaljeinfo */}
-            <Text className="text-base font-extrabold text-gray-900 mb-3">
-              Skadelokasjon: {post?.injuryLocation}
-            </Text>
-
-            <Text className="text-base font-normal text-gray-900 mb-3">
-              Smertenivå (0-10): {post?.painLevel}
-            </Text>
-
-            <Text className="text-base font-normal text-gray-900 mb-3">
-              Hevelse: {post?.swelling ? "Ja" : "Nei"}
-            </Text>
-            <Text className="text-base font-normal text-gray-900 mb-3">
-              Begrenset bevegelighet: {post?.mobilityLimit ? "Ja" : "Nei"}
-            </Text>
-            <Text className="text-base font-normal text-gray-900 mb-3">
-              Temperatur: {post?.temperature}°C
-            </Text>
-
-            {/* Divider */}
-            <View className="h-[1px] bg-gray-200 my-2" />
-            <Spacer />
-
-            {post.description && (
-              <>
-                {/* BESKRIVELSE */}
-                <Text className="text-base font-medium text-gray-500 italic">
-                  Beskrivelse:
+              <View className={`border rounded-xl p-4 mb-4 ${statusBoxClass}`}>
+                <Text className="text-lg">
+                  <Text>
+                    Skadestatus:{" "}
+                    <Text className="font-bold">{post.statusIndicator}</Text>
+                  </Text>
                 </Text>
-                <Text className="text-base">{post?.description}</Text>
-                <Spacer />
-                <View className="h-[1px] bg-gray-200 mb-3" />
-              </>
-            )}
-            {/* Post lagd av */}
-            <Text className="text-gray-500 text-sm font-bold italic">
-              Skadeoppføring registrert: <PostDate value={post.createdAt} />
-            </Text>
+                <Text className="text-sm mt-1">{post.statusExplanation}</Text>
+              </View>
+
+              {/* Detaljeinfo */}
+              <DetailRow label="Skadelokasjon" value={post.injuryLocation} />
+              <DetailRow
+                label="Smertenivå (0–10)"
+                value={`${post.painLevel}`}
+              />
+              <DetailRow label="Hevelse" value={post.swelling ? "Ja" : "Nei"} />
+              <DetailRow
+                label="Begrenset bevegelighet"
+                value={post.mobilityLimit ? "Ja" : "Nei"}
+              />
+              <DetailRow label="Temperatur" value={`${post.temperature}°C`} />
+
+              {/* Divider */}
+              <View className="h-[1px] bg-gray-200 my-2" />
+              <Spacer />
+
+              {post.description && (
+                <>
+                  {/* BESKRIVELSE */}
+                  <Text className="text-base font-medium text-gray-500 italic">
+                    Beskrivelse:
+                  </Text>
+                  <Text className="text-base">{post?.description}</Text>
+                  <Spacer />
+                  <View className="h-[1px] bg-gray-200 mb-3" />
+                </>
+              )}
+              {/* Post lagd av */}
+              <Text className="text-gray-500 text-sm font-bold italic">
+                Skadeoppføring registrert: <PostDate value={post.createdAt} />
+              </Text>
+            </View>
           </View>
 
           <Text className="text-xl font-semibold my-3">
@@ -187,19 +205,21 @@ export default function PostDetails() {
           </Text>
 
           <View>
+            {/* width - 40 pga "p-5" (20+20) */}
             <ScrollView
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              className="w-full h-80 rounded-xl overflow-hidden bg-slate-300"
+              className="w-full h-80 rounded-xl bg-slate-300"
             >
               {post.images.map((uri: string, index: number) => (
-                <Image
-                  key={index}
-                  source={{ uri }}
-                  className="w-96 h-80"
-                  resizeMode="cover"
-                />
+                <View key={index} style={{ width: width - 40, height: 320 }}>
+                  <Image
+                    source={{ uri }}
+                    style={{ width: "100%", height: "100%" }}
+                    resizeMode="cover"
+                  />
+                </View>
               ))}
             </ScrollView>
           </View>
@@ -219,7 +239,7 @@ export default function PostDetails() {
               {postComments.map((item) => (
                 <View
                   key={item.id}
-                  className="flex-row justify-between items-center bg-gray-100 rounded-xl p-3 mb-2"
+                  className="flex-row justify-between items-center bg-white border border-gray-200 rounded-xl p-3 mb-2"
                 >
                   {/* Kommentarer - Innhold */}
                   <View className="flex-1 mr-3">
@@ -230,11 +250,16 @@ export default function PostDetails() {
                     <View className="h-[1px] bg-gray-200 my-1" />
 
                     <Text className="text-xs text-gray-500">
-                      Skrevet <PostDate value={item.comment.createdAt} />
+                      Skrevet{" "}
+                      {item.comment.createdAt ? (
+                        <PostDate value={item.comment.createdAt} />
+                      ) : (
+                        <Text>nå nettopp</Text>
+                      )}
                     </Text>
                   </View>
 
-                  {/* Knapp: Slett kommentar (om forfatter) */}
+                  {/* Knapp: Slett kommentar */}
                   {item.comment.authorUid === firebaseUser.uid && (
                     <Pressable
                       onPress={async () => {
@@ -243,9 +268,13 @@ export default function PostDetails() {
                           prev.filter((c) => c.id !== item.id),
                         );
                       }}
-                      className="bg-red-500 p-2 rounded-full"
+                      className="border-red-100 border-2 p-2 rounded-full"
                     >
-                      <Ionicons name="trash-outline" size={18} color="white" />
+                      <Ionicons
+                        name="trash-outline"
+                        size={18}
+                        color="#ef4444"
+                      />
                     </Pressable>
                   )}
                 </View>
@@ -258,7 +287,7 @@ export default function PostDetails() {
             <TextInput
               value={commentText}
               onChangeText={setCommentText}
-              placeholder="Skriv en kommentar..."
+              placeholder="Skriv et notat..."
               className="flex-1 border border-gray-300 rounded-full px-4 py-2 mr-2 text-gray-800"
             />
             <Pressable
