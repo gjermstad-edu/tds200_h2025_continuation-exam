@@ -109,16 +109,7 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 flex-col p-5 items-center bg-gray-50">
-      <Pressable
-        className="bg-sky-600 p-3 rounded-lg items-center"
-        onPress={() => setIsModalOpen(true)}
-      >
-        <Text className="text-white font-semibold text-lg">
-          Ny skadeobservasjon
-        </Text>
-      </Pressable>
-
+    <View className="flex-1 flex-col px-5 pt-5 items-center bg-gray-50">
       {/* Modal for PostForm */}
       <Modal visible={isModalOpen} animationType="slide">
         <SafeAreaView style={{ flex: 1 }}>
@@ -232,7 +223,7 @@ export default function Index() {
           </Picker>
         </View>
       )}
-      <View className="w-full px-5 my-4">
+      <View className="w-full px-5 mt-4">
         <Text className="font-bold">Dine registrerte skadeobservasjoner:</Text>
       </View>
 
@@ -254,8 +245,8 @@ export default function Index() {
         <>
           <Text>Ingen skadeoppføringer tilgjengelig 👀</Text>
           <Text className="italic text-gray-700 my-2 text-center">
-            (Om du har gjort en søk eller filtrert på skade kan det være det
-            ikke finnes noen som passer med søket/filteret)
+            (Om du har gjort et søk eller filtrert på skade: prøv å tømme søket
+            eller velg "Alle")
           </Text>
         </>
       )}

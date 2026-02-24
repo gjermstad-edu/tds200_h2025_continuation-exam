@@ -21,6 +21,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="registerInjury"
+        options={{
+          title: "Ny oppføring",
+          tabBarIcon: ({ color, focused }) => (
+            <AntDesign name="plus-circle" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Min profil",
