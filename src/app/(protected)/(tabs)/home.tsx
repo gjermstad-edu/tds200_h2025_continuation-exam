@@ -111,24 +111,6 @@ export default function Index() {
   return (
     <View className="flex-1 flex-col px-5 pt-5 items-center bg-gray-50">
       {/* Modal for PostForm */}
-      <Modal visible={isModalOpen} animationType="slide">
-        <SafeAreaView style={{ flex: 1 }}>
-          <PostForm
-            addNewPost={async (post) => {
-              try {
-                await postApi.createPost(post);
-                await getPostsFromBackend();
-                setIsModalOpen(false);
-                // TODO showToast("success", "Innlegg lagt til!");
-              } catch (error) {
-                console.error("Error saving posts to SecureStore:", error);
-                // TODO showToast("error", "Kunne ikke lagre innlegget", String(error));
-              }
-            }}
-            closeModal={() => setIsModalOpen(false)}
-          />
-        </SafeAreaView>
-      </Modal>
 
       {/* conditional rendering of welcome message if userName exists */}
       {isWelcomeShowing && (
