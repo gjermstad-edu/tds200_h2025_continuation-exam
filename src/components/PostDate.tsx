@@ -31,5 +31,5 @@ export default function PostDate({ value, variant = "full" }: PostDateProps) {
     time: formatTimeOnly,
   };
 
-  return formatterByVariant[variant](value);
+  return <Text>{formatterByVariant[variant](dateValue)}</Text>;
 }
