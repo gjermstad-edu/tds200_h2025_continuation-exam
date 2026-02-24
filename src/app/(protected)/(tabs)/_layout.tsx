@@ -14,7 +14,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Hjem",
+          title: "Oversikt",
           tabBarIcon: ({ color, focused }) => (
             <AntDesign name="home" size={24} color={color} />
           ),
@@ -32,7 +32,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Min profil",
+          title: "Profil",
           tabBarIcon: ({ color, focused }) => (
             <AntDesign name="idcard" size={24} color={color} />
           ),

@@ -150,8 +150,10 @@ export default function Index() {
 
           {/* Legg til bilde */}
           {/* Note that Pressable is connected to modal popup by using setIsCameraOpen state. */}
-          <Text className="mb-6 font-bold text-xl">
-            Legg til bilde(r) av skaden<Text className="text-red-600">*</Text>:
+          <Text className="font-bold text-xl">
+            Legg til bilder av skaden (
+            <Text className="text-red-600 italic font-light">obligatorisk</Text>
+            ):
           </Text>
           <Pressable
             onPress={() => {
@@ -187,8 +189,9 @@ export default function Index() {
 
           {/* GRUNNINFO */}
           <Text className="font-bold text-xl">
-            Grunnleggende skadeindikatorer
-            <Text className="text-red-600">*</Text>:
+            Grunnleggende skadeindikatorer (
+            <Text className="text-red-600 italic font-light">obligatorisk</Text>
+            ):
           </Text>
           {/* Skadelokasjon (injuryLocation) */}
           <View className="my-4 w-full lg:w-1/3">
@@ -231,13 +234,15 @@ export default function Index() {
               <Text className="mr-4">
                 {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
               </Text>
-              <Button
-                title="Endre"
+              <Pressable
                 onPress={() => {
                   setIsSwelling(!isSwelling);
                   setFormIsChanged(true);
                 }}
-              />
+                className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
+              >
+                <Text className="text-blue-700 font-semibold">Endre</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -252,13 +257,15 @@ export default function Index() {
                   ? "JA, jeg har begrensning"
                   : "NEI, jeg har ingen begrensning"}
               </Text>
-              <Button
-                title="Endre"
+              <Pressable
                 onPress={() => {
                   setIsMobilityLimited(!isMobilityLimited);
                   setFormIsChanged(true);
                 }}
-              />
+                className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
+              >
+                <Text className="text-blue-700 font-semibold">Endre</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -283,8 +290,9 @@ export default function Index() {
 
           {/* Beskrivelse */}
           <View className="mb-4">
-            <Text className="text-gray-700 font-semibold">
-              Beskrivelse (valgfritt):
+            <Text className="font-bold text-xl">
+              Beskrivelse (<Text className=" italic font-light">valgfritt</Text>
+              ):
             </Text>
             <TextInput
               multiline
@@ -298,6 +306,11 @@ export default function Index() {
 
           {/* KNAPP: Beregn status */}
           <View className="my-4">
+            <Text className="font-bold text-xl">
+              Status (
+              <Text className="italic font-light">beregner + viser status</Text>
+              ):
+            </Text>
             <Pressable
               disabled={!readyForStatus}
               className={`border border-gray-400 py-3 rounded-lg ${
@@ -337,35 +350,38 @@ export default function Index() {
           </View>
 
           {/* KNAPP: Lagre og Avbryt */}
-          <View className="flex-row justify-between">
-            <Pressable
-              className={`flex-1 py-3 border border-gray-400 rounded-lg mr-2 ${
-                isDisabled ? "bg-gray-300" : "bg-emerald-600"
-              }`}
-              disabled={isDisabled}
-              onPress={handleSave}
-            >
-              <Text
-                className={`font-semibold text-center ${
-                  isDisabled ? "text-black" : "text-white"
+          <View>
+            <Text className="font-bold text-xl">Lagre / Resett skjema</Text>
+            <View className="flex-row justify-between">
+              <Pressable
+                className={`flex-1 py-3 border border-gray-400 rounded-lg mr-2 ${
+                  isDisabled ? "bg-gray-300" : "bg-emerald-600"
                 }`}
+                disabled={isDisabled}
+                onPress={handleSave}
               >
-                {isDisabled ? "Beregn status for å lagre" : "Lagre"}
-              </Text>
-            </Pressable>
+                <Text
+                  className={`font-semibold text-center ${
+                    isDisabled ? "text-black" : "text-white"
+                  }`}
+                >
+                  {isDisabled ? "Beregn status for å lagre" : "Lagre"}
+                </Text>
+              </Pressable>
 
-            {/* TODO: Sett inn toast istedenfor alert */}
-            <Pressable
-              className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
-              onPress={() => {
-                resetFields();
-                alert("Skjema er tilbakestilt.");
-              }}
-            >
-              <Text className="text-white font-semibold text-center">
-                Reset skjema
-              </Text>
-            </Pressable>
+              {/* TODO: Sett inn toast istedenfor alert */}
+              <Pressable
+                className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
+                onPress={() => {
+                  resetFields();
+                  alert("Skjema er tilbakestilt.");
+                }}
+              >
+                <Text className="text-white font-semibold text-center">
+                  Reset skjema
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </ScrollView>
