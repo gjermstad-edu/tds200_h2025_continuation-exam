@@ -92,7 +92,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
             pathname: "/postDetails/[id]",
             params: { id: postData.postId },
           }}
-          className="flex-1"
+          className=""
         >
           <View className="flex-1 flex-row w-full items-center p-4">
             <View className="flex-1 flex-col">
