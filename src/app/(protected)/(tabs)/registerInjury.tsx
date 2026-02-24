@@ -17,11 +17,12 @@ import * as postApi from "@/api/postApi";
 import SelectImageModal from "@/components/SelectImageModal";
 import CurrentLocation from "@/components/CurrentLocation";
 import { useAuthContext } from "@/providers/authContext";
-import { CreatePostInput, InjuryStatus } from "@/models/PostData";
+import { CreatePostInput, InjuryStatus, PostData } from "@/models/PostData";
 import { InjuryLocation } from "@/models/PostCategories";
 import InjuryLocationPicker from "@/components/InjuryLocationPicker";
 import { NumberPicker } from "@/components/NumberPicker";
 import { Redirect, router } from "expo-router";
+import { calculateStatus } from "@/util/calculateStatusIndicator";
 
 export default function Index() {
   // This component is a post creation form that lets users:
@@ -33,7 +34,9 @@ export default function Index() {
 
   const [titleText, setTitleText] = useState("");
   const [descriptionText, setDescriptionText] = useState("");
-  const [selectedInjury, setSelectedInjury] = useState<InjuryLocation>();
+  const [selectedInjury, setSelectedInjury] = useState<InjuryLocation | null>(
+    null,
+  );
   const [painLevel, setPainLevel] = useState(0);
   const [isSwelling, setIsSwelling] = useState(false);
   const [isMobilityLimited, setIsMobilityLimited] = useState(false);
@@ -45,16 +48,34 @@ export default function Index() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isReadyToSave, setIsReadyToSave] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [formIsChanged, setFormIsChanged] = useState(true);
 
   const { firebaseUser, userProfile } = useAuthContext();
 
-  const isDisabled = !isReadyToSave || isSaving;
+  const isDisabled: boolean =
+    !isReadyToSave || isSaving || images.length == 0 || formIsChanged;
 
-  function toggleIsReadyToSave() {
-    setIsReadyToSave(!isReadyToSave);
+  const readyForStatus: boolean =
+    selectedInjury != null && painLevel != 0 && images.length != 0;
+
+  // Logikken for å beregne status
+  async function handleStatus(oldPosts: PostData[]) {
+    console.log("Running handleStatus");
+    const calculatedStatus = await calculateStatus(
+      selectedInjury,
+      painLevel,
+      isSwelling,
+      isMobilityLimited,
+      temperature,
+      oldPosts,
+    );
+
+    setStatusIndicatorStatus(calculatedStatus.status);
+    setStatusExplaination(calculatedStatus.newStatusExplaination);
+
+    setFormIsChanged(false);
+    setIsReadyToSave(true);
   }
-
-  // TODO: Logikken for å beregne status
 
   // Lagrer skadeskjema
   const handleSave = async () => {
@@ -101,6 +122,7 @@ export default function Index() {
     setIsReadyToSave(false);
     setImages([]);
     setIsCameraOpen(false);
+    setFormIsChanged(true);
   }
 
   return (
@@ -133,7 +155,10 @@ export default function Index() {
             Legg til bilde(r) av skaden<Text className="text-red-600">*</Text>:
           </Text>
           <Pressable
-            onPress={() => setIsCameraOpen(true)}
+            onPress={() => {
+              setIsCameraOpen(true);
+              setFormIsChanged(true);
+            }}
             className="rounded-xl border-2 border-dashed border-gray-400 bg-gray-50 h-52 justify-center items-center mb-6"
           >
             <EvilIcons name="image" size={80} color="gray" />
@@ -172,7 +197,10 @@ export default function Index() {
             <View className="">
               <InjuryLocationPicker
                 selectedLocation={selectedInjury}
-                onChange={setSelectedInjury}
+                onChange={(newValue) => {
+                  setSelectedInjury(newValue);
+                  setFormIsChanged(true);
+                }}
               />
             </View>
           </View>
@@ -180,28 +208,36 @@ export default function Index() {
           {/* Smertenivå */}
           <View className="my-4 w-full">
             <Text className="text-gray-700 font-semibold mb-1">
-              Smertenivå (0 = ingen smerte / 10 = helvete):
+              Smertenivå (1 = ingen smerte / 10 = helvete):
             </Text>
             <View className="ml-4">
               <NumberPicker
-                min={0}
+                min={1}
                 max={10}
                 value={painLevel}
-                onChange={setPainLevel}
+                onChange={(newValue) => {
+                  setPainLevel(newValue);
+                  setFormIsChanged(true);
+                }}
               />
             </View>
           </View>
 
           {/* Hevelse */}
           <View className="mb-4">
-            <Text className="text-gray-700 font-semibold">Hevelse?</Text>
+            <Text className="text-gray-700 font-semibold">
+              Er det hevelse på/rundt skaden?
+            </Text>
             <View className="flex-1 flex-row items-baseline">
               <Text className="mr-4">
                 {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
               </Text>
               <Button
                 title="Endre"
-                onPress={() => setIsSwelling(!isSwelling)}
+                onPress={() => {
+                  setIsSwelling(!isSwelling);
+                  setFormIsChanged(true);
+                }}
               />
             </View>
           </View>
@@ -219,7 +255,10 @@ export default function Index() {
               </Text>
               <Button
                 title="Endre"
-                onPress={() => setIsMobilityLimited(!isMobilityLimited)}
+                onPress={() => {
+                  setIsMobilityLimited(!isMobilityLimited);
+                  setFormIsChanged(true);
+                }}
               />
             </View>
           </View>
@@ -227,15 +266,18 @@ export default function Index() {
           {/* Temperatur */}
           <View className="my-4 w-full">
             <Text className="text-gray-700 font-semibold mb-1">
-              Hvilken temperatur har du?:
+              Hvilken temperatur har du (velg nærmeste hele tall)?:
             </Text>
             <View className="ml-4">
               <NumberPicker
                 min={34}
                 max={42}
-                steps={0.1}
+                steps={1}
                 value={temperature}
-                onChange={setTemperature}
+                onChange={(newValue) => {
+                  setTemperature(newValue);
+                  setFormIsChanged(true);
+                }}
               />
             </View>
           </View>
@@ -258,13 +300,41 @@ export default function Index() {
           {/* KNAPP: Beregn status */}
           <View className="my-4">
             <Pressable
-              className="flex-1 border border-gray-400 py-3 rounded-lg"
-              onPress={toggleIsReadyToSave}
+              disabled={!readyForStatus}
+              className={`border border-gray-400 py-3 rounded-lg ${
+                !readyForStatus ? "bg-gray-300" : "bg-emerald-600"
+              }`}
+              onPress={async () => {
+                alert("Status is being calculated, please wait ☀️");
+
+                const oldPosts =
+                  await postApi.getRemoteFilteredPosts(selectedInjury);
+
+                await handleStatus(oldPosts);
+              }}
             >
-              <Text className="text-gray-700 font-semibold text-center">
+              <Text
+                className={`font-semibold text-center ${
+                  !readyForStatus ? "text-black" : "text-white"
+                }`}
+              >
                 Beregn status
               </Text>
             </Pressable>
+
+            {formIsChanged == false && (
+              <View className="bg-green-100 border border-green-300 rounded-xl p-4 mt-4">
+                <Text className="text-green-700 text-lg">
+                  <Text>
+                    Skadestatus:{" "}
+                    <Text className="font-bold">{statusIndicatorStatus}</Text>
+                  </Text>
+                </Text>
+                <Text className="text-green-600 text-sm mt-1">
+                  {statusExplaination}
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* KNAPP: Lagre og Avbryt */}
@@ -281,11 +351,7 @@ export default function Index() {
                   isDisabled ? "text-black" : "text-white"
                 }`}
               >
-                {isDisabled
-                  ? "Beregn status før lagring"
-                  : isSaving
-                    ? "Lagrer..."
-                    : "Lagre"}
+                {isDisabled ? "Beregn status for å lagre" : "Lagre"}
               </Text>
             </Pressable>
 
@@ -293,7 +359,7 @@ export default function Index() {
             <Pressable
               className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
               onPress={() => {
-                resetFields;
+                resetFields();
                 alert("Skjema er tilbakestilt.");
               }}
             >

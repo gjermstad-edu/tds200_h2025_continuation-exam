@@ -124,8 +124,8 @@ export async function calculateStatus(
   console.log(oldPosts)
   
   // Lagrer siste registrerte skade på injuryLocation
-  const previousInjury = oldPosts[0];
-  const earlierInjuryRegistered = previousInjury != undefined
+  const previousInjury: PostData = oldPosts[0];
+  const earlierInjuryRegistered: boolean = previousInjury != undefined
 
   let statusSumPoints: number = 0;
   let status: InjuryStatus = "ny skade";
@@ -155,5 +155,5 @@ export async function calculateStatus(
   }
 
   console.log(`Resultat - Status: ${status} / Forklaring: ${statusExplanation}`)
-  return {status: status, StatusExplaination: statusExplanation}
+  return {status: status, newStatusExplaination: statusExplanation}
 };
