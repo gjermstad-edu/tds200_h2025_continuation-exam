@@ -1,22 +1,25 @@
 import React from "react";
-import { Link, router } from "expo-router";
-import { Text, View, Image, Pressable } from "react-native";
+import { Link, router, usePathname } from "expo-router";
+import { Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import * as authApi from "@/api/authApi";
 import { useAuthContext } from "@/providers/authContext";
 
 export default function Header() {
   const { top } = useSafeAreaInsets();
   const { firebaseUser, signOut } = useAuthContext();
 
+  // legger til tilbake-knapp på [id]-detaljesiden
+  const pathname = usePathname();
+  const isPostDetailsRoute = pathname.startsWith("/postDetails/");
   const canGoBack = router.canGoBack();
+  const showBackButton = isPostDetailsRoute && canGoBack;
 
   return (
     <View style={{ paddingTop: top }}>
       <View className="px-4 lg:px-6 h-14 flex items-center flex-row bg-white border-b border-gray-200">
-        {canGoBack ? (
+        {showBackButton ? (
           <Pressable
             onPress={() => router.back()}
             className="mr-3 p-2 rounded-lg"
