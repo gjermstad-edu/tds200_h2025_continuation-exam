@@ -1,30 +1,16 @@
 import React from "react";
 import { useState, useCallback, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  FlatList,
-  Modal,
-} from "react-native";
+import { View, Text, TextInput, Pressable, FlatList } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useFocusEffect } from "@react-navigation/native";
-import { Stack } from "expo-router";
 
 import "@/global.css";
 import * as postApi from "@/api/postApi";
-import PostForm from "@/components/PostForm";
 import { PostData } from "@/models/PostData";
 import Post from "@/components/Post";
 import Spacer from "@/components/Spacer";
-import {
-  InjuryLocation,
-  injuryLocationLabel,
-  PostCategory,
-} from "@/models/PostCategories";
+import { InjuryLocation, injuryLocationLabel } from "@/models/PostCategories";
 import { useAuthContext } from "@/providers/authContext";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 // TODO import Toast from "react-native-toast-message";
 
