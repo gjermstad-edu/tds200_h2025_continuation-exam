@@ -10,18 +10,16 @@ import {
   Image,
   Button,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { EvilIcons } from "@expo/vector-icons";
 
 import * as postApi from "@/api/postApi";
 import SelectImageModal from "@/components/SelectImageModal";
-import CurrentLocation from "@/components/CurrentLocation";
 import { useAuthContext } from "@/providers/authContext";
-import { CreatePostInput, InjuryStatus, PostData } from "@/models/PostData";
+import { InjuryStatus, PostData } from "@/models/PostData";
 import { InjuryLocation } from "@/models/PostCategories";
 import InjuryLocationPicker from "@/components/InjuryLocationPicker";
 import { NumberPicker } from "@/components/NumberPicker";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import { calculateStatus } from "@/util/calculateStatusIndicator";
 
 export default function Index() {
@@ -109,6 +107,7 @@ export default function Index() {
     }
   };
 
+  // Resetter skjema
   function resetFields() {
     setTitleText("");
     setDescriptionText("");

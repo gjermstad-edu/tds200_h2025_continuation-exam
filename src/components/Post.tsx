@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Alert, Platform } from "react-native";
 import { Link } from "expo-router";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { PostData } from "@/models/PostData";
 import { deletePost } from "@/api/postApi";
@@ -36,10 +36,52 @@ export default function Post({ postData, refreshPosts }: PostProps) {
     }
   };
 
+  const createAlertDeletePost = () => {
+    if (Platform.OS === "web") {
+      const userAnswer = confirm(
+        "Ønsker du å slette denne posten?\nObs! Dette er et permanent valg!",
+      );
+      if (userAnswer) {
+        handleDelete();
+        console.info(
+          `🚮 User decided to delete post: ${postData.injuryLocation} / [${postData.statusIndicator}]`,
+        );
+      } else {
+        console.info(
+          `🚯 User decided NOT to delete post: ${postData.injuryLocation} / [${postData.statusIndicator}]`,
+        );
+      }
+    } else if (Platform.OS === "ios") {
+      Alert.alert(
+        "Ønsker du å slette denne posten?",
+        "Obs! Dette er et permanent valg!",
+        [
+          {
+            text: "Avbryt",
+            onPress: () =>
+              console.log(
+                `🚯 User decided NOT to delete post: ${postData.injuryLocation} / [${postData.statusIndicator}]`,
+              ),
+            style: "cancel",
+          },
+          {
+            text: "Slett",
+            onPress: () => {
+              console.log(
+                `🚮 User decided to delete post: ${postData.injuryLocation} / [${postData.statusIndicator}]`,
+              );
+              handleDelete();
+            },
+          },
+        ],
+      );
+    }
+  };
+
   // Post component displays individual post with title, description, hashtags, author, and like button.
   // Note that Tailwind utility classes are used for styling.
   return (
-    <View className="bg-white rounded-2xl mb-5 shadow-md overflow-hidden">
+    <View className="bg-white border-gray-400 border rounded-2xl mb-5 overflow-hidden">
       {/* Innhold */}
       <Link
         href={{
@@ -50,14 +92,13 @@ export default function Post({ postData, refreshPosts }: PostProps) {
       >
         <View className="flex-1 flex-row w-full items-center p-4">
           <View className="flex-1 flex-col">
-            {/* Info inni en link */}
+            {/* Info */}
 
             <View>
               <Text className="text-xl font-extrabold text-gray-800">
-                Skadelokasjon: {postData.injuryLocation}
-              </Text>
-              <Text className="text-sm text-gray-600 mt-1 leading-snug">
-                Status: {postData.statusIndicator}
+                {postData.injuryLocation.toString().charAt(0).toUpperCase() +
+                  postData.injuryLocation.toString().slice(1)}{" "}
+                [{postData.statusIndicator}]
               </Text>
             </View>
           </View>
@@ -67,8 +108,8 @@ export default function Post({ postData, refreshPosts }: PostProps) {
             {/* TODO Delete button (only if owner) */}
             {/* {user?.uid === postData.ownerId && ( */}
             <Pressable
-              onPress={handleDelete}
-              className="bg-red-500 rounded-full p-2 active:bg-red-600"
+              onPress={createAlertDeletePost}
+              className="bg-red-300 rounded-full p-2 active:bg-red-600"
             >
               <Ionicons name="trash-outline" size={22} color="white" />
             </Pressable>
@@ -78,9 +119,9 @@ export default function Post({ postData, refreshPosts }: PostProps) {
 
         {/* TODO: Footer */}
         <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
-          <View className="flex-row flex-wrap mb-3">
+          <View className="flex-row flex-wrap mb-3 text-gray-600">
             <Text>
-              Dato registert: <PostDate value={postData.createdAt} />
+              <PostDate value={postData.createdAt} />
             </Text>
           </View>
         </View>
