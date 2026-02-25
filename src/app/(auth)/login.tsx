@@ -41,6 +41,7 @@ export default function Page() {
   // SJEKK INPUT I SKJEMA
   // ⭐️ Sjekker e-post
   function isValidEmail(email: string): boolean {
+    // REGEX-koden er skrevet av ChatGPT 5.2
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   }
 
@@ -77,7 +78,8 @@ export default function Page() {
 
     if (trimmedName.length === 0) return false;
 
-    return /^[A-Za-zÆØÅæøå][A-Za-zÆØÅæøå\s-]*$/.test(trimmedName);
+    // REGEX-koden er skrevet av ChatGPT 5.2
+    return /^[A-Za-zÆØÅæøå][A-Za-zÆØÅæøå\s'-]*$/.test(trimmedName);
   }
 
   const firstNameHasText: boolean = userFirstName.trim().length > 0;
@@ -101,6 +103,18 @@ export default function Page() {
     lastNameHasText && lastNameIsValid === false
       ? "Skriv kun bokstaver"
       : undefined;
+
+  // SJEKK OM INPUT ER GODKJENT FOR LOGG INN/LAG BRUKER
+  const canSubmitLogin = Boolean(validEmail && validPassword);
+
+  const canSubmitSignUp = Boolean(
+    validEmail &&
+    validPassword &&
+    isValidName(userFirstName) &&
+    isValidName(userLastName),
+  );
+
+  const canSubmit = isSignUp ? canSubmitSignUp : canSubmitLogin;
 
   // GOOGLE SIGN-IN
   const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
@@ -256,9 +270,14 @@ export default function Page() {
                 {/* KNAPP - LOGG INN / LAG NY BRUKER */}
                 <View className="mt-6">
                   <Pressable
-                    className="bg-sky-600 py-3 rounded-xl items-center mb-3"
+                    className={`py-3 rounded-xl items-center mb-3 ${canSubmit ? "bg-sky-600" : "bg-gray-300"}`}
+                    disabled={!canSubmit}
                     onPress={async () => {
+                      // Stopper innlogging om ikke godkjente felter er utfylt
+                      if (!canSubmit) return;
+
                       try {
+                        // LAGER NY BRUKER
                         if (isSignUp) {
                           await authApi.signUpUserWithEmail(
                             userEmail,
@@ -275,6 +294,7 @@ export default function Page() {
                           setPassword("");
                           setUserEmail("");
                         } else {
+                          // LOGGER INN BRUKER
                           await authApi.signInUser(userEmail, password);
                           displaySuccessToast("Innlogging vellykket!");
 
@@ -295,7 +315,9 @@ export default function Page() {
                       }
                     }}
                   >
-                    <Text className="text-white font-semibold text-lg">
+                    <Text
+                      className={`font-semibold text-lg ${canSubmit ? "text-white" : "text-gray-600"}`}
+                    >
                       {isSignUp ? "Lag ny bruker" : "Logg inn"}
                     </Text>
                   </Pressable>
