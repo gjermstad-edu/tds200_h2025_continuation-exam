@@ -96,17 +96,17 @@ export default function Post({ postData, refreshPosts }: PostProps) {
     <View className="mb-4 rounded-2xl bg-white">
       <View className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         {/* Innhold */}
-        <Link
-          href={{
-            pathname: "/postDetails/[id]",
-            params: { id: postData.postId },
-          }}
-          className=""
-        >
-          <View className="flex-1 flex-row w-full items-center p-4">
+        <View className="flex-1 flex-row w-full items-center p-4">
+          {/* Klikkbart innhold (uten delete-knappen inni Link på web) */}
+          <Link
+            href={{
+              pathname: "/postDetails/[id]",
+              params: { id: postData.postId },
+            }}
+            className="flex-1"
+          >
             <View className="flex-1 flex-col">
               {/* Info */}
-
               <View className="flex-row items-center gap-2 flex-wrap">
                 <Text className="text-xl font-extrabold text-gray-800">
                   {postData.injuryLocation.toString().charAt(0).toUpperCase() +
@@ -116,20 +116,28 @@ export default function Post({ postData, refreshPosts }: PostProps) {
                 <TextChip text={postData.statusIndicator} />
               </View>
             </View>
+          </Link>
 
-            {/* Knapp for slett */}
-            <View className="flex-col justify-end items-center space-x-4">
-              {/* Delete button */}
-              <Pressable
-                onPress={createAlertDeletePost}
-                className="border-red-100 border-2 rounded-full p-3"
-              >
-                <Ionicons name="trash-outline" size={18} color="#ef4444" />
-              </Pressable>
-            </View>
+          {/* Knapp for slett */}
+          <View className="flex-col justify-end items-center space-x-4">
+            {/* Delete button */}
+            <Pressable
+              onPress={createAlertDeletePost}
+              className="border-red-100 border-2 rounded-full p-3"
+            >
+              <Ionicons name="trash-outline" size={18} color="#ef4444" />
+            </Pressable>
           </View>
+        </View>
 
-          {/* Footer */}
+        {/* Footer */}
+        <Link
+          href={{
+            pathname: "/postDetails/[id]",
+            params: { id: postData.postId },
+          }}
+          className=""
+        >
           <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
             <View className="flex-row flex-wrap text-sm text-gray-500">
               <Text>
