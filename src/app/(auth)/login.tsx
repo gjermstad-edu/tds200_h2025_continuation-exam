@@ -12,16 +12,20 @@ import * as Google from "expo-auth-session/providers/google";
 import Toast from "react-native-toast-message";
 
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import { signInWithGoogleCredential } from "@/api/googleSignIn";
 import * as authApi from "@/api/authApi";
 import { useAuthContext } from "@/providers/authContext";
 import { FormInput } from "@/components/FormInput";
+import {
+  displayErrorToast,
+  displayInfoToast,
+  displaySuccessToast,
+} from "@/components/ToastMessage";
 
 /*
- ** Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
- ** Brukt med tillatelse.
- */
+/ Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Brukt med tillatelse.
+*/
 
 export default function Page() {
   const [userFirstName, setUserFirstName] = useState("");
@@ -70,14 +74,13 @@ export default function Page() {
         if (event.data?.type === "GOOGLE_AUTH_SUCCESS" && event.data.idToken) {
           signInWithGoogleCredential(event.data.idToken)
             .then(() => {
-              Toast.show({ type: "success", text1: "Google login success" });
+              displaySuccessToast(
+                "Google Sign-in approved",
+                "You are logged in 👍",
+              );
             })
-            .catch((err) => {
-              Toast.show({
-                type: "error",
-                text1: "Login failed",
-                text2: err.message,
-              });
+            .catch((error) => {
+              displayErrorToast("Login failed 🛑", error?.message);
             });
         }
       };
@@ -94,34 +97,14 @@ export default function Page() {
       const idToken = response.authentication.idToken;
       signInWithGoogleCredential(idToken)
         .then(() =>
-          Toast.show({ type: "success", text1: "Google login success" }),
+          displaySuccessToast(
+            "Google Sign-In approved",
+            "You are logged in 👍",
+          ),
         )
-        .catch((err) =>
-          Toast.show({
-            type: "error",
-            text1: "Login failed",
-            text2: err.message,
-          }),
-        );
+        .catch((error) => displayErrorToast("Login failed 🛑", error?.message));
     }
   }, [response]);
-
-  const showToast = (
-    type: "success" | "info" | "error",
-    text1: string,
-    text2?: string,
-  ) => {
-    Toast.show({
-      type,
-      text1,
-      text2,
-      position: "bottom",
-      visibilityTime: 3000,
-      onHide: () => {
-        console.log("Toast is gone, you can trigger something now.");
-      },
-    });
-  };
 
   return (
     <>
@@ -143,12 +126,12 @@ export default function Page() {
                   role="heading"
                   className="text-3xl text-red-600 text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
                 >
-                  Velkommen til Project RAMMEVERK 🔨🖼️
+                  Velkommen til RehabTrace 🤕
                 </Text>
               )}
 
               <Text className="mx-auto max-w-[700px] text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
-                Utforsk og lær mer om Firma. Oppdag tjenestene våre nå.
+                Vi hjelper idrettsutøvere holde oversikt over egne skader.
               </Text>
             </View>
             <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
@@ -223,26 +206,32 @@ export default function Page() {
                           userFirstName,
                           userLastName,
                         );
-                        showToast("success", "Bruker opprettet!");
+
+                        displaySuccessToast("Ny brukerkonto opprettet!");
                         console.info(
                           `New user added: ${userFirstName} ${userLastName} at ${userEmail}`,
                         );
+
                         setPassword("");
                         setUserEmail("");
                       } else {
                         await authApi.signInUser(userEmail, password);
-                        showToast("success", "Innlogging vellykket!");
+                        displayErrorToast("Innlogging vellykket!");
+
                         console.info(`User logged in: ${userEmail}`);
+
                         setPassword("");
                         setUserEmail("");
                       }
                     } catch (error: any) {
-                      showToast(
-                        "error",
-                        "Feil under autentisering",
+                      displayErrorToast(
+                        "Feil under autentisering 🛑",
                         error?.message ?? "Ukjent feil",
                       );
-                      console.error(error?.message);
+
+                      console.error(
+                        `🚨 ERROR during authentication ${error?.message} [Source: login.tsx]`,
+                      );
                     }
                   }}
                 >
@@ -256,10 +245,9 @@ export default function Page() {
                     className="border border-gray-400 py-3 rounded-lg items-center"
                     onPress={() => {
                       setIsSignUp(false);
-                      showToast(
-                        "info",
+                      displayInfoToast(
                         "Avbrutt registrering",
-                        "Gått tilbake til innlogging",
+                        "Gått tilbake til innlogging.",
                       );
                     }}
                   >

@@ -17,6 +17,7 @@ import { uploadImageToFirebase } from './imageApi';
 import { CreatePostInput, PostData, PostDataFirestore } from '@/models/PostData';
 import { InjuryLocation } from '@/models/PostCategories';
 import { timestampToDate } from '@/util/timestampToDate';
+import { displayErrorToast, displaySuccessToast } from '@/components/ToastMessage';
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -111,8 +112,7 @@ export const createPost = async (post: CreatePostInput) => {
     console.log(
       `🛜 Document for new post written to Firestore with ID: ${newPostWithMetadata.postId} [from postApi.ts]`,
     );
-    // TODO:
-    // showSuccessToast('👍 Ny post er opprettet og publisert', 'Du finner den på hjem-skjermen.');
+    displaySuccessToast("Ny oppføring opprettet", `Skadelokasjon: ${post.injuryLocation}`)
 
     // Returnerer objektet
     return {
@@ -122,11 +122,7 @@ export const createPost = async (post: CreatePostInput) => {
       updatedAt: null,
     } as unknown as PostData;
   } catch (e) {
-    // TODO: Fiks Toast eller fjern
-    /* showErrorToast(
-      '🚨 Error:  Noe gikk galt under opprettelsen av posten.',
-      'Vennligst prøv igjen, ingenting er lagret.',
-    ); */
+    displayErrorToast("Noe gikk galt under lagring av oppføringen", "Vennligst prøv igjen.")
     console.error(
       `🚨 Error: Adding new post to Firestore failed: ${e} [from postApi.ts/createPost]`,
     );

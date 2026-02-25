@@ -7,9 +7,9 @@ import { PostData } from "@/models/PostData";
 import { deletePost } from "@/api/postApi";
 import { useAuthContext } from "@/providers/authContext";
 
-// TODO import Toast from "react-native-toast-message";
 import PostDate from "./PostDate";
 import TextChip from "./TextChip";
+import { displayErrorToast, displaySuccessToast } from "./ToastMessage";
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -30,11 +30,20 @@ export default function Post({ postData, refreshPosts }: PostProps) {
   const handleDelete = async () => {
     try {
       await deletePost(postData.postId!);
-      // TODO Toast
+
+      displaySuccessToast(
+        "Oppføring slettet.",
+        `Lokasjon: "${postData.injuryLocation}"`,
+      );
+
       await refreshPosts();
-    } catch (err: any) {
-      console.error("Delete failed:", err);
-      // TODO Toast
+    } catch (error: any) {
+      console.error(
+        "🚨 ERROR: Deletion of injury posts failed: ",
+        error?.message,
+      );
+
+      displayErrorToast("Sletting feilet", error?.message);
     }
   };
 
@@ -110,19 +119,17 @@ export default function Post({ postData, refreshPosts }: PostProps) {
 
             {/* Knapp for slett */}
             <View className="flex-col justify-end items-center space-x-4">
-              {/* TODO Delete button (only if owner) */}
-              {/* {user?.uid === postData.ownerId && ( */}
+              {/* Delete button */}
               <Pressable
                 onPress={createAlertDeletePost}
                 className="border-red-100 border-2 rounded-full p-3"
               >
                 <Ionicons name="trash-outline" size={18} color="#ef4444" />
               </Pressable>
-              {/* )} */}
             </View>
           </View>
 
-          {/* TODO: Footer */}
+          {/* Footer */}
           <View className="flex-row justify-between items-center w-full px-4 py-3 border-t border-gray-100 bg-gray-50">
             <View className="flex-row flex-wrap text-sm text-gray-500">
               <Text>

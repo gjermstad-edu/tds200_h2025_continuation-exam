@@ -23,6 +23,11 @@ import { NumberPicker } from "@/components/NumberPicker";
 import { router } from "expo-router";
 import { calculateStatus } from "@/util/calculateStatusIndicator";
 import LoadingScreen from "@/components/LoadingScreen";
+import {
+  displayErrorToast,
+  displayInfoToast,
+  displaySuccessToast,
+} from "@/components/ToastMessage";
 
 export default function Index() {
   // This component is a post creation form that lets users:
@@ -105,9 +110,15 @@ export default function Index() {
       resetFields();
 
       router.replace("/home");
+
+      displaySuccessToast(`Oppføring for ${InjuryLocation} lagret.`);
     } catch (error) {
-      console.error("Error saving posts:", error);
-      // TODO showToast("error", "Kunne ikke lagre skjema", String(error));
+      console.error("🚨 ERROR saving post:", error?.message);
+
+      displayErrorToast(
+        "Kunne ikke lagre oppføring 🛑",
+        "Vennligst prøv igjen.",
+      );
     } finally {
       setIsSavingWaiting(false);
       setIsSaving(false);
@@ -129,6 +140,8 @@ export default function Index() {
     setImages([]);
     setIsCameraOpen(false);
     setFormIsChanged(true);
+
+    displayInfoToast("Skjema er resatt 👍");
   }
 
   // Setter farge for statusboksen

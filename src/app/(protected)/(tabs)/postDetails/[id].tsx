@@ -19,8 +19,6 @@ import { useAuthContext } from "@/providers/authContext";
 import Spacer from "@/components/Spacer";
 import PostDate from "@/components/PostDate";
 
-// TODO import { showInfoToast, showSuccessToast } from '@/utils/toast';
-
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
 / Brukt med tillatelse.

@@ -12,8 +12,6 @@ import Spacer from "@/components/Spacer";
 import { InjuryLocation, injuryLocationLabel } from "@/models/PostCategories";
 import { useAuthContext } from "@/providers/authContext";
 
-// TODO import Toast from "react-native-toast-message";
-
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
 / Brukt med tillatelse.
