@@ -278,7 +278,7 @@ export default function Index() {
 
               <View className="flex-row items-center justify-between">
                 <Text className="text-gray-800 flex-1 mr-3">
-                  {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
+                  {isSwelling ? "👍 Det ER hevelse" : "👎 Det er IKKE hevelse"}
                 </Text>
 
                 <Pressable
@@ -302,8 +302,8 @@ export default function Index() {
               <View className="flex-row items-center justify-between">
                 <Text className="text-gray-800 flex-1 mr-3">
                   {isMobilityLimited
-                    ? "JA, jeg har begrensning"
-                    : "NEI, jeg har ingen begrensning"}
+                    ? "👍 JA, jeg har begrensning"
+                    : "👎 NEI, jeg har ingen begrensning"}
                 </Text>
 
                 <Pressable

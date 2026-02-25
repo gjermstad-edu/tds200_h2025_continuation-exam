@@ -29,7 +29,7 @@ export default function GoogleSignInButton({
         iconStyle={styles.icon}
         style={styles.button}
       >
-        Login with Google
+        Logg inn med Google
       </FontAwesome.Button>
     </View>
   );
