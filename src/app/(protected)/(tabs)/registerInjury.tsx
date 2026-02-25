@@ -143,210 +143,206 @@ export default function Index() {
     statusBoxStyleByStatus[statusIndicatorStatus] ??
     "bg-gray-100 border-gray-300";
 
+  function FormCard(props: any) {
+    return (
+      <View className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
+        <Text className="text-lg font-extrabold text-gray-900 mb-3">
+          {props.title}
+        </Text>
+
+        {props.children}
+      </View>
+    );
+  }
+
+  function SectionHelp(props: any) {
+    return <Text className="text-sm text-gray-500 mb-3">{props.children}</Text>;
+  }
+
   return (
     <View className="flex-1 bg-gray-100">
       <ScrollView
         keyboardDismissMode="interactive"
         automaticallyAdjustKeyboardInsets
-        className="px-6 py-8"
+        className="px-5 py-8"
       >
         {/* Form container */}
-        <View className="bg-white rounded-2xl shadow-md p-6 mb-5">
-          <Text className="font-bold text-4xl">Ny oppføring</Text>
-          <Text className="mb-6 font-light text-xl">
-            Registrer en skadeobservasjon
-          </Text>
-
-          {/* Camera Modal */}
-          {/* Note that multiple images can be added to a post. 
-              SelectImageModal will popup when isCameraOpen is true.
-              And it allows you to select images from camera or gallery.
-              It passes selected images back via setImages prop. */}
-          <Modal visible={isCameraOpen} animationType="slide">
-            <SelectImageModal
-              closeModal={() => setIsCameraOpen(false)}
-              setImages={setImages}
-              currentImages={images}
-            />
-          </Modal>
-
-          {/* Legg til bilde */}
-          {/* Note that Pressable is connected to modal popup by using setIsCameraOpen state. */}
-          <Text className="font-bold text-xl">
-            Legg til bilder av skaden (
-            <Text className="text-red-600 italic font-light">obligatorisk</Text>
-            ):
-          </Text>
-          <Pressable
-            onPress={() => {
-              setIsCameraOpen(true);
-              setFormIsChanged(true);
-            }}
-            className="rounded-xl border-2 border-dashed border-gray-400 bg-gray-50 h-52 justify-center items-center mb-6"
-          >
-            <EvilIcons name="image" size={80} color="gray" />
-            <Text className="text-gray-500 mt-2">
-              Trykk for å legge til bilder
+        <View className="pb-10">
+          {/* Header */}
+          <View className="mb-4">
+            <Text className="text-3xl font-bold text-gray-900 mb-1">
+              Ny oppføring
             </Text>
-          </Pressable>
+            <Text className="text-gray-600">Registrer en skadeobservasjon</Text>
+          </View>
 
-          {/* Preview images
-              It loops through images array and displays each image. */}
-          {images.length > 0 && (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="flex-row mb-6"
+          {/* KORT 1: Bilder */}
+          <FormCard title="Bilder">
+            <SectionHelp>
+              Legg til minst ett bilde av skaden (obligatorisk).
+            </SectionHelp>
+
+            <Pressable
+              onPress={() => {
+                setIsCameraOpen(true);
+                setFormIsChanged(true);
+              }}
+              className="rounded-xl border-2 border-dashed border-gray-400 bg-gray-50 h-44 justify-center items-center"
             >
-              {images.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: image }}
-                  className="w-28 h-28 rounded-lg mr-3 border border-gray-300"
-                  resizeMode="cover"
+              <EvilIcons name="image" size={70} color="gray" />
+              <Text className="text-gray-500 mt-2">
+                Trykk for å legge til bilder
+              </Text>
+            </Pressable>
+
+            {images.length > 0 && (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                className="mt-4"
+              >
+                {images.map((image, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: image }}
+                    className="w-24 h-24 rounded-xl mr-3 border border-gray-200"
+                    resizeMode="cover"
+                  />
+                ))}
+              </ScrollView>
+            )}
+          </FormCard>
+
+          {/* KORT 2: Grunnleggende indikatorer */}
+          <FormCard title="Grunnleggende indikatorer">
+            <SectionHelp>(Obligatorisk)</SectionHelp>
+
+            <Text className="text-gray-700 font-bold mb-1">Skadelokasjon</Text>
+            <InjuryLocationPicker
+              selectedLocation={selectedInjury}
+              onChange={(newValue) => {
+                setSelectedInjury(newValue);
+                setFormIsChanged(true);
+              }}
+            />
+
+            <View className="mt-5">
+              <Text className="text-gray-700 font-semibold mb-1">
+                Smertenivå (1 = ingen smerte / 10 = helvete)
+              </Text>
+              <View className="mt-2">
+                <NumberPicker
+                  min={1}
+                  max={10}
+                  value={painLevel}
+                  onChange={(newValue) => {
+                    setPainLevel(newValue);
+                    setFormIsChanged(true);
+                  }}
                 />
-              ))}
-            </ScrollView>
-          )}
-
-          {/* GRUNNINFO */}
-          <Text className="font-bold text-xl">
-            Grunnleggende skadeindikatorer (
-            <Text className="text-red-600 italic font-light">obligatorisk</Text>
-            ):
-          </Text>
-          {/* Skadelokasjon (injuryLocation) */}
-          <View className="my-4 w-full lg:w-1/3">
-            <Text className="text-gray-700 font-bold mb-1">Skadelokasjon:</Text>
-            <View className="">
-              <InjuryLocationPicker
-                selectedLocation={selectedInjury}
-                onChange={(newValue) => {
-                  setSelectedInjury(newValue);
-                  setFormIsChanged(true);
-                }}
-              />
+              </View>
             </View>
-          </View>
 
-          {/* Smertenivå */}
-          <View className="my-4 w-full">
-            <Text className="text-gray-700 font-semibold mb-1">
-              Smertenivå (1 = ingen smerte / 10 = helvete):
-            </Text>
-            <View className="ml-4">
-              <NumberPicker
-                min={1}
-                max={10}
-                value={painLevel}
-                onChange={(newValue) => {
-                  setPainLevel(newValue);
-                  setFormIsChanged(true);
-                }}
-              />
-            </View>
-          </View>
-
-          {/* Hevelse */}
-          <View className="mb-4">
-            <Text className="text-gray-700 font-semibold">
-              Er det hevelse på/rundt skaden?
-            </Text>
-            <View className="flex-row items-baseline  mt-2 ml-4">
-              <Text className="mr-4">
-                {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
+            {/* Hevelse */}
+            <View className="mt-5">
+              <Text className="text-gray-700 font-semibold mb-2">
+                Er det hevelse på/rundt skaden?
               </Text>
-              <Pressable
-                onPress={() => {
-                  setIsSwelling(!isSwelling);
-                  setFormIsChanged(true);
-                }}
-                className="min-w-[72px] px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
-              >
-                <Text className="text-blue-700 font-semibold">Endre</Text>
-              </Pressable>
-            </View>
-          </View>
 
-          {/* Begrensning i bevegelse */}
-          <View className="mb-4">
-            <Text className="text-gray-700 font-semibold">
-              Har du begrensning i bevegelse av skaden?
-            </Text>
-            <View className="flex-row items-baseline mt-2 ml-4">
-              <Text className="mr-4">
-                {isMobilityLimited
-                  ? "JA, jeg har begrensning"
-                  : "NEI, jeg har ingen begrensning"}
+              <View className="flex-row items-center justify-between">
+                <Text className="text-gray-800 flex-1 mr-3">
+                  {isSwelling ? "Det ER hevelse" : "Det er IKKE hevelse"}
+                </Text>
+
+                <Pressable
+                  onPress={() => {
+                    setIsSwelling(!isSwelling);
+                    setFormIsChanged(true);
+                  }}
+                  className="self-start min-w-[72px] px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 items-center justify-center"
+                >
+                  <Text className="text-blue-700 font-semibold">Endre</Text>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Bevegelsesbegrensning */}
+            <View className="mt-5">
+              <Text className="text-gray-700 font-semibold mb-2">
+                Har du begrensning i bevegelse av skaden?
               </Text>
-              <Pressable
-                onPress={() => {
-                  setIsMobilityLimited(!isMobilityLimited);
-                  setFormIsChanged(true);
-                }}
-                className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200"
-              >
-                <Text className="text-blue-700 font-semibold">Endre</Text>
-              </Pressable>
-            </View>
-          </View>
 
-          {/* Temperatur */}
-          <View className="mb-4 w-full">
-            <Text className="text-gray-700 font-semibold mb-1">
-              Hvilken temperatur har du (nærmeste tall)?:
-            </Text>
-            <View className="ml-4">
-              <NumberPicker
-                min={34}
-                max={42}
-                steps={1}
-                value={temperature}
-                onChange={(newValue) => {
-                  setTemperature(newValue);
-                  setFormIsChanged(true);
-                }}
-              />
-            </View>
-          </View>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-gray-800 flex-1 mr-3">
+                  {isMobilityLimited
+                    ? "JA, jeg har begrensning"
+                    : "NEI, jeg har ingen begrensning"}
+                </Text>
 
-          {/* Beskrivelse */}
-          <View className="mb-4">
-            <Text className="font-bold text-xl">
-              Beskrivelse (<Text className=" italic font-light">valgfritt</Text>
-              ):
-            </Text>
+                <Pressable
+                  onPress={() => {
+                    setIsMobilityLimited(!isMobilityLimited);
+                    setFormIsChanged(true);
+                  }}
+                  className="self-start min-w-[72px] px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 items-center justify-center"
+                >
+                  <Text className="text-blue-700 font-semibold">Endre</Text>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Temperatur */}
+            <View className="mt-5">
+              <Text className="text-gray-700 font-semibold mb-1">
+                Hvilken temperatur har du (velg nærmeste hele tall)?
+              </Text>
+              <View className="mt-2">
+                <NumberPicker
+                  min={34}
+                  max={42}
+                  steps={1}
+                  value={temperature}
+                  onChange={(newValue) => {
+                    setTemperature(newValue);
+                    setFormIsChanged(true);
+                  }}
+                />
+              </View>
+            </View>
+          </FormCard>
+
+          {/* KORT 3: Brukerbeskrivelse */}
+          <FormCard title="Beskrivelse">
+            <SectionHelp>(Valgfritt)</SectionHelp>
             <TextInput
               multiline
               numberOfLines={3}
               onChangeText={setDescriptionText}
               value={descriptionText}
-              className="border border-gray-300 rounded-lg p-3 mt-1 bg-gray-50 h-24"
-              placeholder="Gi en beskrivelse av skaden og nåværende indikatorer."
+              className="border border-gray-200 rounded-xl p-3 bg-gray-50 h-24"
+              placeholder="Gi en kort beskrivelse av skaden og indikatorer."
             />
-          </View>
+          </FormCard>
 
-          {/* KNAPP: Beregn status */}
-          <View className="my-4">
-            <Text className="font-bold text-xl">
-              Status (
-              <Text className="italic font-light">beregner + viser status</Text>
-              ):
-            </Text>
+          {/* KORT 4: Statusberegning */}
+          <FormCard title="Status">
+            <SectionHelp>Beregn status før du kan lagre.</SectionHelp>
+
             <Pressable
-              disabled={!readyForStatus}
-              className={`border border-gray-400 py-3 rounded-lg ${
-                !readyForStatus ? "bg-gray-300" : "bg-emerald-600"
+              disabled={!readyForStatus || isStatusWaiting}
+              className={`py-3 rounded-xl items-center ${
+                !readyForStatus || isStatusWaiting
+                  ? "bg-gray-300"
+                  : "bg-emerald-600"
               }`}
               onPress={async () => {
                 const oldPosts =
                   await postApi.getRemoteFilteredPosts(selectedInjury);
-
                 await handleStatus(oldPosts);
               }}
             >
               {isStatusWaiting ? (
-                <View className="flex-row items-center justify-center">
+                <View className="flex-row items-center">
                   <ActivityIndicator color="white" />
                   <Text className="text-white font-semibold ml-2">
                     Beregner...
@@ -354,66 +350,63 @@ export default function Index() {
                 </View>
               ) : (
                 <Text
-                  className={`font-semibold text-center ${
-                    !readyForStatus ? "text-black" : "text-white"
-                  }`}
+                  className={`font-semibold ${!readyForStatus ? "text-black" : "text-white"}`}
                 >
                   Beregn status
                 </Text>
               )}
             </Pressable>
 
-            {formIsChanged == false && (
+            {formIsChanged === false && (
               <View className={`${statusBoxClass} border rounded-xl p-4 mt-4`}>
                 <Text className="text-lg">
-                  <Text>
-                    Skadestatus:{" "}
-                    <Text className="font-bold">{statusIndicatorStatus}</Text>
-                  </Text>
+                  Skadestatus:{" "}
+                  <Text className="font-bold">{statusIndicatorStatus}</Text>
                 </Text>
                 <Text className="text-sm mt-1">{statusExplaination}</Text>
               </View>
             )}
-          </View>
+          </FormCard>
 
-          {/* KNAPP: Lagre og Avbryt */}
-          {isSavingWaiting ? (
-            <LoadingScreen line1="Lagrer skadeobservasjon" />
-          ) : (
-            <View>
-              <Text className="font-bold text-xl">Lagre / Resett skjema</Text>
-              <View className="flex-row justify-between">
-                <Pressable
-                  className={`flex-1 py-3 border border-gray-400 rounded-lg mr-2 ${
-                    isDisabled ? "bg-gray-300" : "bg-emerald-600"
-                  }`}
-                  disabled={isDisabled}
-                  onPress={handleSave}
-                >
+          {/* KORT 5: Lagre / Reset */}
+          <FormCard title="Lagre">
+            <View className="flex-row gap-3">
+              <Pressable
+                className={`flex-1 py-3 rounded-xl items-center ${
+                  isDisabled ? "bg-gray-300" : "bg-emerald-600"
+                }`}
+                disabled={isDisabled || isSaving}
+                onPress={handleSave}
+              >
+                {isSaving ? (
+                  <View className="flex-row items-center">
+                    <ActivityIndicator color="white" />
+                    <Text className="text-white font-semibold ml-2">
+                      Lagrer...
+                    </Text>
+                  </View>
+                ) : (
                   <Text
-                    className={`font-semibold text-center ${
-                      isDisabled ? "text-black" : "text-white"
-                    }`}
+                    className={`font-semibold text-center leading-5 ${isDisabled ? "text-black" : "text-white"}`}
                   >
-                    {isDisabled ? "Beregn status for å lagre" : "Lagre"}
+                    {isDisabled ? "Beregn status\nfor å lagre" : "Lagre"}
                   </Text>
-                </Pressable>
+                )}
+              </Pressable>
 
-                {/* TODO: Sett inn toast istedenfor alert */}
-                <Pressable
-                  className="flex-1 bg-red-500 py-3 rounded-lg ml-2"
-                  onPress={() => {
-                    resetFields();
-                    alert("Skjema er tilbakestilt.");
-                  }}
-                >
-                  <Text className="text-white font-semibold text-center">
-                    Reset skjema
-                  </Text>
-                </Pressable>
-              </View>
+              <Pressable
+                className="flex-1 py-3 rounded-xl items-center justify-center bg-red-500"
+                onPress={() => {
+                  resetFields();
+                  alert("Skjema er tilbakestilt.");
+                }}
+              >
+                <Text className="text-white font-semibold text-center leading-5">
+                  Reset skjema
+                </Text>
+              </Pressable>
             </View>
-          )}
+          </FormCard>
         </View>
       </ScrollView>
     </View>
