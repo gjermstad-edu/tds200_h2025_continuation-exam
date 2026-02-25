@@ -12,9 +12,9 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import type { UserProfile } from '@/models/UserProfile';
 
 /*
- ** Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
- ** Brukt med tillatelse.
- */
+/ Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Brukt med tillatelse.
+*/
 
 /**
  * Logg inn bruker med e-post og passord
@@ -68,6 +68,8 @@ export const signOutUser = async () => {
     } else {
       console.log(`👍 User signed out successfully [Source: authenticateApi.ts/signOutUser()]`);
     }
+
+    
   } catch (error: any) {
     console.error(
       `🚨 Error signing out user: ${error.message} [Source: authenticateApi.ts/signOutUser()]`,
