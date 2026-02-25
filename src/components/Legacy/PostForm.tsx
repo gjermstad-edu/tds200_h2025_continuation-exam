@@ -14,7 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import { EvilIcons } from "@expo/vector-icons";
 
 import SelectImageModal from "@/components/SelectImageModal";
-import CurrentLocation from "@/components/CurrentLocation";
+import CurrentLocation from "@/components/Legacy/CurrentLocation";
 import { useAuthContext } from "@/providers/authContext";
 import { CreatePostInput, InjuryStatus } from "@/models/PostData";
 import { InjuryLocation } from "@/models/PostCategories";
