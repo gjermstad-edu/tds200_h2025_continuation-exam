@@ -40,15 +40,17 @@ export default function Page() {
 
   // SJEKK INPUT I SKJEMA
   // ⭐️ Sjekker e-post
-  function isValidEmail(email: string) {
+  function isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   }
 
-  const emailHasText = userEmail.trim().length > 0;
-  const emailIsValid = emailHasText ? isValidEmail(userEmail) : undefined;
+  const emailHasText: boolean = userEmail.trim().length > 0;
+  const emailIsValid: boolean = emailHasText
+    ? isValidEmail(userEmail)
+    : undefined;
 
-  const validEmail = emailIsValid; // boolean | undefined
-  const errorEmail =
+  const validEmail: boolean = emailIsValid;
+  const errorEmail: string =
     emailHasText && emailIsValid === false
       ? "E-post er ikke riktig skrevet"
       : undefined;
@@ -67,6 +69,37 @@ export default function Page() {
   const errorPassword: string =
     passwordHasText && passwordIsValid === false
       ? "Passordet må være minst 6 tegn"
+      : undefined;
+
+  // ⭐️ Sjekker navn
+  function isValidName(name: string): boolean {
+    const trimmedName = name.trim();
+
+    if (trimmedName.length === 0) return false;
+
+    return /^[A-Za-zÆØÅæøå][A-Za-zÆØÅæøå\s-]*$/.test(trimmedName);
+  }
+
+  const firstNameHasText: boolean = userFirstName.trim().length > 0;
+  const firstNameIsValid: boolean = firstNameHasText
+    ? isValidName(userFirstName)
+    : undefined;
+
+  const validFirstName: boolean = firstNameIsValid;
+  const errorFirstName: string =
+    firstNameHasText && firstNameIsValid === false
+      ? "Skriv kun bokstaver"
+      : undefined;
+
+  const lastNameHasText: boolean = userLastName.trim().length > 0;
+  const lastNameIsValid: boolean = lastNameHasText
+    ? isValidName(userLastName)
+    : undefined;
+
+  const validLastName: boolean = lastNameIsValid;
+  const errorLastName: string =
+    lastNameHasText && lastNameIsValid === false
+      ? "Skriv kun bokstaver"
       : undefined;
 
   // GOOGLE SIGN-IN
@@ -177,8 +210,8 @@ export default function Page() {
                       placeholder="Fornavn"
                       autoCapitalize="words"
                       keyboardType="default"
-                      valid={validEmail}
-                      error={errorEmail}
+                      valid={validFirstName}
+                      error={errorFirstName}
                     />
                     <FormInput
                       label="Etternavn"
@@ -187,8 +220,8 @@ export default function Page() {
                       placeholder="Etternavn"
                       autoCapitalize="words"
                       keyboardType="default"
-                      valid={validEmail}
-                      error={errorEmail}
+                      valid={validLastName}
+                      error={errorLastName}
                     />
                   </View>
                 )}
