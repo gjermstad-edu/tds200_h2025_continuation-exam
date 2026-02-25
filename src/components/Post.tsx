@@ -47,11 +47,11 @@ export default function Post({ postData, refreshPosts }: PostProps) {
     }
   };
 
-  // Bekreftelse om brukeren ønsker å slette posten
+  // Be om bekreftelse om brukeren ønsker å slette oppføringen
   const createAlertDeletePost = () => {
     if (Platform.OS === "web") {
       const userAnswer = confirm(
-        "Ønsker du å slette denne posten?\nObs! Dette er et permanent valg!",
+        `Slette oppføringen "${postData.injuryLocation}"?\nObs! Sletting kan ikke angres!`,
       );
       if (userAnswer) {
         handleDelete();
@@ -65,8 +65,8 @@ export default function Post({ postData, refreshPosts }: PostProps) {
       }
     } else if (Platform.OS === "ios") {
       Alert.alert(
-        "Ønsker du å slette denne posten?",
-        "Obs! Dette er et permanent valg!",
+        `Slette oppføringen "${postData.injuryLocation}"?`,
+        "Obs! Dette kan ikke angres!",
         [
           {
             text: "Avbryt",
