@@ -40,7 +40,7 @@ export default function Page() {
   const userName = firebaseUser?.displayName ?? "";
 
   // SJEKK INPUT I SKJEMA
-  // Sjekker e-post
+  // ⭐️ Sjekker e-post
   function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   }
@@ -52,6 +52,22 @@ export default function Page() {
   const errorEmail =
     emailHasText && emailIsValid === false
       ? "E-post er ikke riktig skrevet"
+      : undefined;
+
+  // ⭐️ Sjekker passordet
+  function isValidPassword(password: string): boolean {
+    return password.length >= 6;
+  }
+
+  const passwordHasText: boolean = password.trim().length > 0;
+  const passwordIsValid: boolean = passwordHasText
+    ? isValidPassword(password)
+    : undefined;
+
+  const validPassword: boolean = passwordIsValid;
+  const errorPassword: string =
+    passwordHasText && passwordIsValid === false
+      ? "Passordet må være minst 6 tegn"
       : undefined;
 
   // GOOGLE SIGN-IN
@@ -177,13 +193,16 @@ export default function Page() {
 
                 {/* Password */}
                 <View className="mt-4">
-                  <Text className="text-gray-800 mb-1">Passord</Text>
-                  <TextInput
+                  <FormInput
+                    label="Passord"
                     value={password}
+                    password={true}
                     onChangeText={setPassword}
-                    secureTextEntry
                     placeholder="Passord"
-                    className="border border-gray-300 rounded-lg px-3 py-2"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    valid={validPassword}
+                    error={errorPassword}
                   />
                 </View>
 

@@ -5,9 +5,16 @@ type InputFieldProps = TextInputProps & {
   label: string;
   error?: string;
   valid?: boolean; // true = grønn border, false = rød border, undefined = grå
+  password?: boolean; // for å skjule passord
 };
 
-export function FormInput({ label, error, valid, ...props }: InputFieldProps) {
+export function FormInput({
+  label,
+  error,
+  valid,
+  password = false,
+  ...props
+}: InputFieldProps) {
   const borderClassName =
     valid === true
       ? "border-green-500"
@@ -15,12 +22,15 @@ export function FormInput({ label, error, valid, ...props }: InputFieldProps) {
         ? "border-red-500"
         : "border-gray-300";
 
+  const isPasswordField = password === true;
+
   return (
     <View className="mt-4">
       <Text className="text-gray-800 mb-1">{label}</Text>
 
       <TextInput
         {...props}
+        secureTextEntry={isPasswordField}
         className={`border rounded-lg px-3 py-2 ${borderClassName}`}
       />
 
