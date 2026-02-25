@@ -97,7 +97,7 @@ function setExplaination(sumPoints: number): string {
     let statusExplaination: string = "";
 
     if(sumPoints >0){
-        statusExplaination += "Din status siden sist er: FORBEDRET.\“Dette går riktig vei."
+        statusExplaination += "Din status siden sist er: FORBEDRET.\nDette går riktig vei."
     } else if (sumPoints == 0){
         statusExplaination += "Din status siden sist er: STABIL.\nDet er bra, men om du har sterke smerter så kontakt lege."
     } else if (sumPoints < 0) {
@@ -151,7 +151,7 @@ export async function calculateStatus(
     if (statusSumPoints <= -1) status = "forverres"
     if (statusSumPoints == 0) status = "stabil"
   } else {
-    statusExplanation = `Ny skade registrert. Det er ikke registrert noen tidligere skade på "${injury}" så status settes til "Ny skade".`
+    statusExplanation = `Ny skade registrert. Du har ikke registrert noen tidligere ${injury}-skade så status settes til "Ny skade".`
   }
 
   console.log(`Resultat - Status: ${status} / Forklaring: ${statusExplanation}`)
