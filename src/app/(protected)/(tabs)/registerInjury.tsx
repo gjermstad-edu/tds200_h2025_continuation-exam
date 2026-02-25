@@ -8,7 +8,6 @@ import {
   Modal,
   ScrollView,
   Image,
-  Button,
   ActivityIndicator,
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
@@ -22,28 +21,13 @@ import InjuryLocationPicker from "@/components/InjuryLocationPicker";
 import { NumberPicker } from "@/components/NumberPicker";
 import { router } from "expo-router";
 import { calculateStatus } from "@/util/calculateStatusIndicator";
-import LoadingScreen from "@/components/LoadingScreen";
 import {
   displayErrorToast,
   displayInfoToast,
   displaySuccessToast,
 } from "@/components/ToastMessage";
-
-function FormCard(props: any) {
-  return (
-    <View className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
-      <Text className="text-lg font-extrabold text-gray-900 mb-3">
-        {props.title}
-      </Text>
-
-      {props.children}
-    </View>
-  );
-}
-
-function SectionHelp(props: any) {
-  return <Text className="text-sm text-gray-500 mb-3">{props.children}</Text>;
-}
+import FormCard from "@/components/FormCard";
+import SectionHelp from "@/components/SectionHelp";
 
 export default function Index() {
   // This component is a post creation form that lets users:
@@ -108,10 +92,12 @@ export default function Index() {
 
     setIsSavingWaiting(true);
     setIsSaving(true);
+    const safeTitle =
+      titleText.trim() || `Oppføring: ${selectedInjury ?? "skade"}`;
 
     try {
       await postApi.createPost({
-        title: titleText,
+        title: safeTitle,
         description: descriptionText,
         images,
         injuryLocation: selectedInjury,
