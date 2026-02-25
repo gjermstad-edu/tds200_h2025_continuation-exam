@@ -91,17 +91,21 @@ export default function Index() {
 
   return (
     <View className="flex-1 flex-col items-center bg-gray-100">
-      <View className="w-full px-5 py-8">
+      <View className="w-full px-5 pt-8">
+        {/* TITTEL og UNDERTITTEL */}
         <Text className="text-3xl font-bold text-gray-900 mb-1">
           Skadeobservasjoner
         </Text>
-        <Text className="text-gray-600">Oversikt over registrerte skader</Text>
+        <Text className="text-gray-600 mb-5">
+          Oversikt over registrerte skader
+        </Text>
       </View>
+
       {/* FILTRERING */}
       <View className="w-full">
         <Pressable
           onPress={toggleShowFilter}
-          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-400 border-2"
+          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-400 bg-white border-2"
         >
           <Text className=" font-bold">
             {isShowFilters ? "🔍 Skjul søk & filtrer" : "🔍 Søk & filtrer"}
@@ -190,9 +194,9 @@ export default function Index() {
         />
       ) : (
         <>
-          <Text>Ingen skadeoppføringer tilgjengelig 👀</Text>
-          <Text className="italic text-gray-700 my-2 text-center">
-            (Om du har gjort et søk eller filtrert på skade: prøv å tømme søket
+          <Text className="mt-5">Ingen skadeoppføringer 👀 Lag en ny?</Text>
+          <Text className="italic text-gray-700 my-2 px-4 text-center">
+            (om du har gjort et søk eller filtrert på skade: prøv å tømme søket
             eller velg "Alle")
           </Text>
         </>
