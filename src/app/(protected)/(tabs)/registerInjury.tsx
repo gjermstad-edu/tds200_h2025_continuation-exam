@@ -29,6 +29,22 @@ import {
   displaySuccessToast,
 } from "@/components/ToastMessage";
 
+function FormCard(props: any) {
+  return (
+    <View className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
+      <Text className="text-lg font-extrabold text-gray-900 mb-3">
+        {props.title}
+      </Text>
+
+      {props.children}
+    </View>
+  );
+}
+
+function SectionHelp(props: any) {
+  return <Text className="text-sm text-gray-500 mb-3">{props.children}</Text>;
+}
+
 export default function Index() {
   // This component is a post creation form that lets users:
   // - Add images (via camera/gallery).
@@ -111,7 +127,7 @@ export default function Index() {
 
       router.replace("/home");
 
-      displaySuccessToast(`Oppføring for ${InjuryLocation} lagret.`);
+      displaySuccessToast(`Oppføring for ${selectedInjury} lagret.`);
     } catch (error) {
       console.error("🚨 ERROR saving post:", error?.message);
 
@@ -156,22 +172,6 @@ export default function Index() {
     statusBoxStyleByStatus[statusIndicatorStatus] ??
     "bg-gray-100 border-gray-300";
 
-  function FormCard(props: any) {
-    return (
-      <View className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
-        <Text className="text-lg font-extrabold text-gray-900 mb-3">
-          {props.title}
-        </Text>
-
-        {props.children}
-      </View>
-    );
-  }
-
-  function SectionHelp(props: any) {
-    return <Text className="text-sm text-gray-500 mb-3">{props.children}</Text>;
-  }
-
   return (
     <View className="flex-1 bg-gray-100 px-5">
       {/* Camera Modal */}
@@ -188,8 +188,8 @@ export default function Index() {
       </Modal>
       <ScrollView
         keyboardDismissMode="interactive"
-        automaticallyAdjustKeyboardInsets
-        className=" py-8"
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingVertical: 32 }}
       >
         {/* Form container */}
         <View className="pb-10">
