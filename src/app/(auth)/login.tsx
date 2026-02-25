@@ -20,6 +20,7 @@ import {
   displayInfoToast,
   displaySuccessToast,
 } from "@/components/ToastMessage";
+import GoogleSignInButton from "@/components/ButtonGoogleSignIn";
 
 /*
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
@@ -249,13 +250,10 @@ export default function Page() {
 
               {/* Google Auth */}
               <View className="mt-6">
-                <Pressable
+                <GoogleSignInButton
                   disabled={!request}
                   onPress={() => promptAsync({ useProxy: false })}
-                  className="bg-sky-600 py-3 rounded-lg items-center"
-                >
-                  <Text className="text-white">Google Sign-In</Text>
-                </Pressable>
+                />
               </View>
             </View>
           </View>
