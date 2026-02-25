@@ -93,7 +93,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
   // Post component displays individual post with title, description, hashtags, author, and like button.
   // Note that Tailwind utility classes are used for styling.
   return (
-    <View className="mb-4 rounded-2xl bg-white shadow-slate-100 shadow-sm">
+    <View className="mb-4 rounded-2xl bg-white">
       <View className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         {/* Innhold */}
         <Link
