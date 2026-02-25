@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
 
-import Footer from "@/components/Footer";
 import { signInWithGoogleCredential } from "@/api/googleSignIn";
 import * as authApi from "@/api/authApi";
 import { useAuthContext } from "@/providers/authContext";
@@ -139,40 +138,57 @@ export default function Page() {
                 </Text>
 
                 <Text className="mx-auto max-w-[700px] px-10 text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
-                  Vi hjelper idrettsutøvere dokumentere og følge opp lette
-                  skadeobservasjoner.
+                  Registrer skadeoppføringer med indikatorer som smerte, hevelse
+                  og bevegelighet – og følg utviklingen fra gang til gang.
                 </Text>
               </View>
 
               {/* Switch LOGG INN - NY BRUKER */}
-              <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
-                <View className="flex-row justify-center items-center">
-                  <Text className="text-gray-700 font-bold">Logg inn</Text>
+              <View className="w-11/12 md:w-1/3 p-6 rounded-2xl bg-white border border-gray-200 mt-5">
+                <View className="flex-row justify-center items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-2">
+                  <Text
+                    className={`font-bold ${!isSignUp ? "text-gray-900" : "text-gray-500"}`}
+                  >
+                    Logg inn
+                  </Text>
+
                   <Switch
                     value={isSignUp}
                     onValueChange={setIsSignUp}
                     trackColor={{ false: "#ccc", true: "#0096C7" }}
-                    thumbColor={isSignUp ? "#eee" : "#000"}
+                    thumbColor={isSignUp ? "#fff" : "#fff"}
                     className="mx-3"
                   />
-                  <Text className="text-gray-700 font-bold">Ny bruker</Text>
+
+                  <Text
+                    className={`font-bold ${isSignUp ? "text-gray-900" : "text-gray-500"}`}
+                  >
+                    Ny bruker
+                  </Text>
                 </View>
 
                 {/* First and Last Name */}
                 {isSignUp && (
                   <View className="mt-4">
-                    <Text className="text-gray-800 mb-1">Navnet ditt</Text>
-                    <TextInput
+                    <FormInput
+                      label="Fornavn"
                       value={userFirstName}
                       onChangeText={setUserFirstName}
                       placeholder="Fornavn"
-                      className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
+                      autoCapitalize="words"
+                      keyboardType="default"
+                      valid={validEmail}
+                      error={errorEmail}
                     />
-                    <TextInput
+                    <FormInput
+                      label="Etternavn"
                       value={userLastName}
                       onChangeText={setUserLastName}
                       placeholder="Etternavn"
-                      className="border border-gray-300 rounded-lg px-3 py-2"
+                      autoCapitalize="words"
+                      keyboardType="default"
+                      valid={validEmail}
+                      error={errorEmail}
                     />
                   </View>
                 )}
@@ -189,10 +205,8 @@ export default function Page() {
                     valid={validEmail}
                     error={errorEmail}
                   />
-                </View>
 
-                {/* Password */}
-                <View className="mt-4">
+                  {/* Password */}
                   <FormInput
                     label="Passord"
                     value={password}
@@ -200,7 +214,7 @@ export default function Page() {
                     onChangeText={setPassword}
                     placeholder="Passord"
                     autoCapitalize="none"
-                    keyboardType="email-address"
+                    keyboardType="default"
                     valid={validPassword}
                     error={errorPassword}
                   />
@@ -209,7 +223,7 @@ export default function Page() {
                 {/* KNAPP - LOGG INN / LAG NY BRUKER */}
                 <View className="mt-6">
                   <Pressable
-                    className="bg-sky-600 py-3 rounded-lg items-center mb-3"
+                    className="bg-sky-600 py-3 rounded-xl items-center mb-3"
                     onPress={async () => {
                       try {
                         if (isSignUp) {
@@ -272,7 +286,13 @@ export default function Page() {
                 </View>
 
                 {/* Google Auth */}
-                <View className="mt-6">
+                <View className="mt-4">
+                  <View className="flex-row items-center my-4">
+                    <View className="flex-1 h-[1px] bg-gray-200" />
+                    <Text className="mx-3 text-gray-400">eller</Text>
+                    <View className="flex-1 h-[1px] bg-gray-200" />
+                  </View>
+
                   <GoogleSignInButton
                     disabled={!request}
                     onPress={() => promptAsync({ useProxy: false })}
