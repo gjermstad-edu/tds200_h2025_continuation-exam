@@ -8,6 +8,8 @@ import {
   Image,
   ScrollView,
   useWindowDimensions,
+  Platform,
+  Alert,
 } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -101,6 +103,55 @@ export default function PostDetails() {
       console.error("🚨 Error adding comment:", error);
     }
     setIsLoadingAddComment(false);
+  };
+
+  // SLETT NOTAT
+  const handleDeleteComment = async (item) => {
+    await commentApi.deleteComment(item.id, post.postId);
+    setPostComments((prev) => prev.filter((c) => c.id !== item.id));
+  };
+
+  // Bekreftelse om brukeren ønsker å slette posten
+  const createAlertDeletePost = (item) => {
+    if (Platform.OS === "web") {
+      const userAnswer = confirm(
+        `Sikker du vil slette notatet ditt?\nObs! Dette kan ikke angres!`,
+      );
+      if (userAnswer) {
+        handleDeleteComment(item);
+        console.info(
+          `🚮 User decided to delete comment: ${post.injuryLocation} / [${post.statusIndicator}]`,
+        );
+      } else {
+        console.info(
+          `🚯 User decided NOT to delete comment: ${post.injuryLocation} / [${post.statusIndicator}]`,
+        );
+      }
+    } else if (Platform.OS === "ios") {
+      Alert.alert(
+        `Sikker du vil slette notatet ditt?`,
+        "Obs! Dette kan ikke angres!",
+        [
+          {
+            text: "Avbryt",
+            onPress: () =>
+              console.log(
+                `🚯 User decided NOT to delete comment: ${post.injuryLocation} / [${post.statusIndicator}]`,
+              ),
+            style: "cancel",
+          },
+          {
+            text: "Slett",
+            onPress: () => {
+              console.log(
+                `🚮 User decided to delete comment: ${post.injuryLocation} / [${post.statusIndicator}]`,
+              );
+              handleDeleteComment(item);
+            },
+          },
+        ],
+      );
+    }
   };
 
   // Vis loading-beskjed mens skadeobservasjonen lastes inn
@@ -261,10 +312,7 @@ export default function PostDetails() {
                   {item.comment.authorUid === firebaseUser.uid && (
                     <Pressable
                       onPress={async () => {
-                        await commentApi.deleteComment(item.id, post.postId);
-                        setPostComments((prev) =>
-                          prev.filter((c) => c.id !== item.id),
-                        );
+                        createAlertDeletePost(item);
                       }}
                       className="border-red-100 border-2 p-2 rounded-full"
                     >
