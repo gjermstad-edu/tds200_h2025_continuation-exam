@@ -9,7 +9,6 @@ import {
   Switch,
 } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
-import Toast from "react-native-toast-message";
 
 import Footer from "@/components/Footer";
 import { signInWithGoogleCredential } from "@/api/googleSignIn";
@@ -110,28 +109,18 @@ export default function Page() {
     <>
       <View className="flex-1">
         <View className="py-24 md:py-32">
-          <Toast />
           <View className="px-4 md:px-6 items-center">
             <View className="flex flex-col items-center gap-4 text-center">
-              {firebaseUser && (
-                <Text
-                  role="heading"
-                  className="text-3xl text-red-600 text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
-                >
-                  Welcome {userName}
-                </Text>
-              )}
-              {!firebaseUser && (
-                <Text
-                  role="heading"
-                  className="text-3xl text-red-600 text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
-                >
-                  Velkommen til RehabTrace 🤕
-                </Text>
-              )}
+              <Text
+                role="heading"
+                className="text-3xl text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
+              >
+                Velkommen til RehabTrace 🤕
+              </Text>
 
               <Text className="mx-auto max-w-[700px] text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
-                Vi hjelper idrettsutøvere holde oversikt over egne skader.
+                Vi hjelper idrettsutøvere dokumentere og følge opp lette
+                skadeobservasjoner.
               </Text>
             </View>
             <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
