@@ -92,9 +92,12 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 flex-col px-5 items-center bg-gray-100">
-      <View className="w-full px-5 mt-4 py-2">
-        <Text className="font-bold text-2xl">Skadeobservasjoner</Text>
+    <View className="flex-1 flex-col items-center bg-gray-100">
+      <View className="w-full px-5 py-8">
+        <Text className="text-3xl font-bold text-gray-900 mb-1">
+          Skadeobservasjoner
+        </Text>
+        <Text className="text-gray-600">Oversikt over registrerte skader</Text>
       </View>
       {/* FILTRERING */}
       <View className="w-full">
@@ -103,12 +106,12 @@ export default function Index() {
           className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-400 border-2"
         >
           <Text className=" font-bold">
-            {isShowFilters ? "🔍 Skjul" : "🔍 Søk & filtrer"}
+            {isShowFilters ? "🔍 Skjul søk & filtrer" : "🔍 Søk & filtrer"}
           </Text>
         </Pressable>
       </View>
       {isShowFilters && (
-        <View className="w-full px-5 my-4">
+        <View className="w-full px-5 mt-4">
           {/* Search bar */}
           <Text className="py-1 font-bold">
             Søk i skadeobservasjonene dine:
