@@ -173,20 +173,34 @@ export default function Index() {
   }
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1 bg-gray-100 px-5">
+      {/* Camera Modal */}
+      {/* Note that multiple images can be added to a post. 
+              SelectImageModal will popup when isCameraOpen is true.
+              And it allows you to select images from camera or gallery.
+              It passes selected images back via setImages prop. */}
+      <Modal visible={isCameraOpen} animationType="slide">
+        <SelectImageModal
+          closeModal={() => setIsCameraOpen(false)}
+          setImages={setImages}
+          currentImages={images}
+        />
+      </Modal>
       <ScrollView
         keyboardDismissMode="interactive"
         automaticallyAdjustKeyboardInsets
-        className="px-5 py-8"
+        className=" py-8"
       >
         {/* Form container */}
         <View className="pb-10">
           {/* Header */}
-          <View className="mb-4">
+          <View className="">
             <Text className="text-3xl font-bold text-gray-900 mb-1">
               Ny oppføring
             </Text>
-            <Text className="text-gray-600">Registrer en skadeobservasjon</Text>
+            <Text className="text-gray-600 mb-5">
+              Registrer en skadeobservasjon
+            </Text>
           </View>
 
           {/* KORT 1: Bilder */}
