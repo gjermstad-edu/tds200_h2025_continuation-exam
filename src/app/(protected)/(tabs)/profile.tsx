@@ -3,6 +3,7 @@ import { View, Text, Pressable } from "react-native";
 import { useAuthContext } from "@/providers/authContext";
 import * as authApi from "@/api/authApi";
 import "@/global.css";
+import { displaySuccessToast } from "@/components/ToastMessage";
 
 function ProfileCard(props: any) {
   return (
@@ -66,6 +67,11 @@ export default function Index() {
             onPress={async () => {
               try {
                 await authApi.signOutUser();
+
+                displaySuccessToast(
+                  "Du er nå logget ut.",
+                  "Velkommen tilbake senere ☀️",
+                );
               } catch (error: any) {
                 console.error(
                   `🚨 ERROR in signing out user: ${error?.message} [Source: (tabs)/profile.tsx]`,
