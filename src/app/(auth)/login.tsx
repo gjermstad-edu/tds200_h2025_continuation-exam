@@ -118,7 +118,7 @@ export default function Page() {
                 Velkommen til RehabTrace 🤕
               </Text>
 
-              <Text className="mx-auto max-w-[700px] text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
+              <Text className="mx-auto max-w-[700px] px-10 text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
                 Vi hjelper idrettsutøvere dokumentere og følge opp lette
                 skadeobservasjoner.
               </Text>
@@ -205,7 +205,7 @@ export default function Page() {
                         setUserEmail("");
                       } else {
                         await authApi.signInUser(userEmail, password);
-                        displayErrorToast("Innlogging vellykket!");
+                        displaySuccessToast("Innlogging vellykket!");
 
                         console.info(`User logged in: ${userEmail}`);
 
