@@ -7,6 +7,7 @@ import {
   View,
   Platform,
   Switch,
+  ScrollView,
 } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
 
@@ -53,6 +54,7 @@ export default function Page() {
       ? "E-post er ikke riktig skrevet"
       : undefined;
 
+  // GOOGLE SIGN-IN
   const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
   if (!webClientId) {
     throw new Error(
@@ -75,12 +77,12 @@ export default function Page() {
           signInWithGoogleCredential(event.data.idToken)
             .then(() => {
               displaySuccessToast(
-                "Google Sign-in approved",
-                "You are logged in 👍",
+                "Google Sign-in godkjent",
+                "Du er nå logget inn 👍",
               );
             })
             .catch((error) => {
-              displayErrorToast("Login failed 🛑", error?.message);
+              displayErrorToast("Login feilet 🛑", error?.message);
             });
         }
       };
@@ -109,157 +111,159 @@ export default function Page() {
   return (
     <>
       <View className="flex-1">
-        <View className="py-24 md:py-32">
-          <View className="px-4 md:px-6 items-center">
-            <View className="flex flex-col items-center gap-4 text-center">
-              <Text
-                role="heading"
-                className="text-3xl text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
-              >
-                Velkommen til RehabTrace 🤕
-              </Text>
+        <ScrollView keyboardDismissMode="interactive">
+          <View className="py-24 lg:py-12">
+            <View className="px-4 md:px-6 items-center">
+              <View className="flex flex-col items-center gap-4 text-center">
+                <Text
+                  role="heading"
+                  className="text-3xl text-center native:text-5xl font-bold sm:text-4xl md:text-5xl lg:text-6xl font-rounded"
+                >
+                  Velkommen til RehabTrace 🤕
+                </Text>
 
-              <Text className="mx-auto max-w-[700px] px-10 text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
-                Vi hjelper idrettsutøvere dokumentere og følge opp lette
-                skadeobservasjoner.
-              </Text>
-            </View>
-            <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
-              {/* Switch */}
-              <View className="flex-row justify-center items-center my-5">
-                <Text className="text-gray-700 font-medium">Logg inn</Text>
-                <Switch
-                  value={isSignUp}
-                  onValueChange={setIsSignUp}
-                  trackColor={{ false: "#ccc", true: "#0096C7" }}
-                  thumbColor={isSignUp ? "#eee" : "#000"}
-                  className="mx-3"
-                />
-                <Text className="text-gray-700 font-medium">Ny bruker</Text>
+                <Text className="mx-auto max-w-[700px] px-10 text-lg text-center text-gray-500 md:text-xl dark:text-gray-400">
+                  Vi hjelper idrettsutøvere dokumentere og følge opp lette
+                  skadeobservasjoner.
+                </Text>
               </View>
 
-              {/* First and Last Name */}
-              {isSignUp && (
-                <View className="mt-4">
-                  <Text className="text-gray-800 mb-1">Navnet ditt</Text>
-                  <TextInput
-                    value={userFirstName}
-                    onChangeText={setUserFirstName}
-                    placeholder="Fornavn"
-                    className="border border-gray-300 rounded-lg px-3 py-2"
+              {/* Switch LOGG INN - NY BRUKER */}
+              <View className="flex flex-col w-11/12 md:w-1/3 p-6 rounded-2xl">
+                <View className="flex-row justify-center items-center">
+                  <Text className="text-gray-700 font-bold">Logg inn</Text>
+                  <Switch
+                    value={isSignUp}
+                    onValueChange={setIsSignUp}
+                    trackColor={{ false: "#ccc", true: "#0096C7" }}
+                    thumbColor={isSignUp ? "#eee" : "#000"}
+                    className="mx-3"
                   />
+                  <Text className="text-gray-700 font-bold">Ny bruker</Text>
+                </View>
+
+                {/* First and Last Name */}
+                {isSignUp && (
+                  <View className="mt-4">
+                    <Text className="text-gray-800 mb-1">Navnet ditt</Text>
+                    <TextInput
+                      value={userFirstName}
+                      onChangeText={setUserFirstName}
+                      placeholder="Fornavn"
+                      className="border border-gray-300 rounded-lg px-3 py-2 mb-2"
+                    />
+                    <TextInput
+                      value={userLastName}
+                      onChangeText={setUserLastName}
+                      placeholder="Etternavn"
+                      className="border border-gray-300 rounded-lg px-3 py-2"
+                    />
+                  </View>
+                )}
+
+                {/* Email */}
+                <View className="mt-4">
+                  <FormInput
+                    label="E-post"
+                    value={userEmail}
+                    onChangeText={setUserEmail}
+                    placeholder="E-post"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    valid={validEmail}
+                    error={errorEmail}
+                  />
+                </View>
+
+                {/* Password */}
+                <View className="mt-4">
+                  <Text className="text-gray-800 mb-1">Passord</Text>
                   <TextInput
-                    value={userLastName}
-                    onChangeText={setUserLastName}
-                    placeholder="Etternavn"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    placeholder="Passord"
                     className="border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </View>
-              )}
 
-              {/* Email */}
-              <View className="mt-4">
-                <FormInput
-                  label="E-post"
-                  value={userEmail}
-                  onChangeText={setUserEmail}
-                  placeholder="E-post"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  valid={validEmail}
-                  error={errorEmail}
-                />
-              </View>
-
-              {/* Password */}
-              <View className="mt-4">
-                <Text className="text-gray-800 mb-1">Passord</Text>
-                <TextInput
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  placeholder="Passord"
-                  className="border border-gray-300 rounded-lg px-3 py-2"
-                />
-              </View>
-
-              {/* KNAPP - LOGG INN / LAG NY BRUKER */}
-              <View className="mt-6 space-y-3">
-                <Pressable
-                  className="bg-sky-600 py-3 rounded-lg items-center"
-                  onPress={async () => {
-                    try {
-                      if (isSignUp) {
-                        await authApi.signUpUserWithEmail(
-                          userEmail,
-                          password,
-                          userFirstName,
-                          userLastName,
-                        );
-
-                        displaySuccessToast("Ny brukerkonto opprettet!");
-                        console.info(
-                          `New user added: ${userFirstName} ${userLastName} at ${userEmail}`,
-                        );
-
-                        setPassword("");
-                        setUserEmail("");
-                      } else {
-                        await authApi.signInUser(userEmail, password);
-                        displaySuccessToast("Innlogging vellykket!");
-
-                        console.info(`User logged in: ${userEmail}`);
-
-                        setPassword("");
-                        setUserEmail("");
-                      }
-                    } catch (error: any) {
-                      displayErrorToast(
-                        "Feil under autentisering 🛑",
-                        error?.message ?? "Ukjent feil",
-                      );
-
-                      console.error(
-                        `🚨 ERROR during authentication ${error?.message} [Source: login.tsx]`,
-                      );
-                    }
-                  }}
-                >
-                  <Text className="text-white font-semibold text-lg">
-                    {isSignUp ? "Lag ny bruker" : "Logg inn"}
-                  </Text>
-                </Pressable>
-
-                {isSignUp && (
+                {/* KNAPP - LOGG INN / LAG NY BRUKER */}
+                <View className="mt-6">
                   <Pressable
-                    className="border border-gray-400 py-3 rounded-lg items-center"
-                    onPress={() => {
-                      setIsSignUp(false);
-                      displayInfoToast(
-                        "Avbrutt registrering",
-                        "Gått tilbake til innlogging.",
-                      );
+                    className="bg-sky-600 py-3 rounded-lg items-center mb-3"
+                    onPress={async () => {
+                      try {
+                        if (isSignUp) {
+                          await authApi.signUpUserWithEmail(
+                            userEmail,
+                            password,
+                            userFirstName,
+                            userLastName,
+                          );
+
+                          displaySuccessToast("Ny brukerkonto opprettet!");
+                          console.info(
+                            `New user added: ${userFirstName} ${userLastName} at ${userEmail}`,
+                          );
+
+                          setPassword("");
+                          setUserEmail("");
+                        } else {
+                          await authApi.signInUser(userEmail, password);
+                          displaySuccessToast("Innlogging vellykket!");
+
+                          console.info(`User logged in: ${userEmail}`);
+
+                          setPassword("");
+                          setUserEmail("");
+                        }
+                      } catch (error: any) {
+                        displayErrorToast(
+                          "Feil under autentisering 🛑",
+                          error?.message ?? "Ukjent feil",
+                        );
+
+                        console.error(
+                          `🚨 ERROR during authentication ${error?.message} [Source: login.tsx]`,
+                        );
+                      }
                     }}
                   >
-                    <Text className="text-gray-800 font-semibold text-lg">
-                      Avbryt
+                    <Text className="text-white font-semibold text-lg">
+                      {isSignUp ? "Lag ny bruker" : "Logg inn"}
                     </Text>
                   </Pressable>
-                )}
-              </View>
 
-              {/* Google Auth */}
-              <View className="mt-6">
-                <GoogleSignInButton
-                  disabled={!request}
-                  onPress={() => promptAsync({ useProxy: false })}
-                />
+                  {isSignUp && (
+                    <Pressable
+                      className="border border-gray-400 py-3 rounded-lg items-center"
+                      onPress={() => {
+                        setIsSignUp(false);
+                        displayInfoToast(
+                          "Avbrutt registrering",
+                          "Gått tilbake til innlogging.",
+                        );
+                      }}
+                    >
+                      <Text className="text-gray-800 font-semibold text-lg">
+                        Avbryt
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+
+                {/* Google Auth */}
+                <View className="mt-6">
+                  <GoogleSignInButton
+                    disabled={!request}
+                    onPress={() => promptAsync({ useProxy: false })}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
-      <Footer />
     </>
   );
 }
