@@ -18,7 +18,7 @@ import { useAuthContext } from "@/providers/authContext";
 */
 
 export default function Index() {
-  const { firebaseUser, userProfile } = useAuthContext();
+  const { firebaseUser } = useAuthContext();
 
   const [posts, setPosts] = useState<PostData[]>([]);
   const [allPosts, setAllPosts] = useState<PostData[]>([]);
@@ -105,9 +105,9 @@ export default function Index() {
       <View className="w-full">
         <Pressable
           onPress={toggleShowFilter}
-          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-400 bg-white border-2"
+          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-200 bg-gray-50 border"
         >
-          <Text className=" font-bold">
+          <Text className="text-blue-700 font-semibold">
             {isShowFilters ? "🔍 Skjul søk & filtrer" : "🔍 Søk & filtrer"}
           </Text>
         </Pressable>

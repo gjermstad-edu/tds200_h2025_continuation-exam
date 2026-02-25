@@ -70,7 +70,7 @@ export default function Index() {
         {firebaseUser && (
           <View className="mt-2">
             <Pressable
-              className="bg-red-500 py-4 rounded-xl items-center"
+              className="bg-red-400 py-3 rounded-xl items-center"
               onPress={async () => {
                 try {
                   await authApi.signOutUser();
@@ -86,7 +86,7 @@ export default function Index() {
                 }
               }}
             >
-              <Text className="text-white font-semibold text-lg">Logg ut</Text>
+              <Text className="text-white font-bold text-lg">Logg ut</Text>
             </Pressable>
 
             <Text className="text-xs text-gray-500 text-center mt-3">

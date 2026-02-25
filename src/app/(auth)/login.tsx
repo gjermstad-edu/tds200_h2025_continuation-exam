@@ -194,7 +194,7 @@ export default function Page() {
               <View className="w-11/12 md:w-1/3 p-6 rounded-2xl bg-white border border-gray-200 mt-5">
                 <View className="flex-row justify-center items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-2">
                   <Text
-                    className={`font-bold ${!isSignUp ? "text-gray-900" : "text-gray-500"}`}
+                    className={`font-bold ${!isSignUp ? "text-gray-900" : "text-gray-400"}`}
                   >
                     Logg inn
                   </Text>
@@ -316,7 +316,7 @@ export default function Page() {
                     }}
                   >
                     <Text
-                      className={`font-semibold text-lg ${canSubmit ? "text-white" : "text-gray-600"}`}
+                      className={`font-semibold text-lg ${canSubmit ? "text-white" : "text-gray-800"}`}
                     >
                       {isSignUp ? "Lag ny bruker" : "Logg inn"}
                     </Text>
