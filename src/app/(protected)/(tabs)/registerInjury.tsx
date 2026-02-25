@@ -156,8 +156,6 @@ export default function Index() {
     setImages([]);
     setIsCameraOpen(false);
     setFormIsChanged(true);
-
-    displayInfoToast("Skjema er resatt 👍");
   }
 
   // Setter farge for statusboksen
@@ -425,6 +423,7 @@ export default function Index() {
                 className="flex-1 py-3 rounded-xl items-center justify-center bg-red-500"
                 onPress={() => {
                   resetFields();
+                  displayInfoToast("Skjema er resatt 👍");
                   alert("Skjema er tilbakestilt.");
                 }}
               >
