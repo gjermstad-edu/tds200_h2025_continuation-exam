@@ -6,7 +6,7 @@ import { getStorageRef } from 'root/firebaseConfig';
 / Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
 / Brukt med tillatelse.
 /
-/ Koden er oppdatert ved hjelp av ChatGPT å lage et sikrere filnavn for bildet
+/ Koden er oppdatert ved hjelp av ChatGPT å lage et sikrere filnavn for bildet: Del 2) linje 22-27
 */
 
 export const uploadImageToFirebase = async (uri: string) => {

@@ -16,12 +16,8 @@ import type { UserProfile } from '@/models/UserProfile';
 / Brukt med tillatelse.
 */
 
-/**
- * Logg inn bruker med e-post og passord
- * @param email
- * @param password
- * @returns Firebase `userCredential.user`
- */
+// Logg inn bruker med e-post og passord
+// returnerer Firebase `userCredential.user`
 export const signInUser = async (
   email: string,
   password: string,
@@ -32,7 +28,7 @@ export const signInUser = async (
     const fireBaseUser = userCredential.user;
     const userId = userCredential.user.uid;
 
-    console.log(`🤔 Logging in. ${email}'s uid: ${userId}`);
+    console.log(`Logging in. ${email}'s uid: ${userId}`);
 
     const userProfileReference = doc(db, 'users', userId);
     const userSnapshot = await getDoc(userProfileReference);
@@ -40,21 +36,19 @@ export const signInUser = async (
     const userProfile = userSnapshot.exists() ? (userSnapshot.data() as UserProfile) : null;
 
     console.log(
-      `👍 User ${userCredential.user.email} successfully signed in [Source: authenticateApi.ts/signInUser()]`,
+      `User ${userCredential.user.email} successfully signed in [from: authApi.ts/signInUser()]`,
     );
 
     return { authUser: fireBaseUser, userProfile };
   } catch (error: any) {
     console.error(
-      `🚨 Error: Could not log in user, ${error.message} [Source: authenticateApi.ts/signOutUser()]`,
+      `Error: Could not log in user, ${error.message} [From: authApi.ts/signOutUser()]`,
     );
     throw error; // rethrow for UI to catch
   }
 };
 
-/**
- * Logg ut innlogget bruker
- */
+// Logg ut innlogget bruker
 export const signOutUser = async () => {
   const userEmailBeforeSignOut = auth.currentUser?.email ?? undefined;
 
@@ -63,25 +57,23 @@ export const signOutUser = async () => {
 
     if (userEmailBeforeSignOut) {
       console.log(
-        `👍 Signed out user "${userEmailBeforeSignOut}" successfully [Source: authenticateApi.ts/signOutUser()]`,
+        `Signed out user "${userEmailBeforeSignOut}" successfully [From: authApi.ts/signOutUser()]`,
       );
     } else {
-      console.log(`👍 User signed out successfully [Source: authenticateApi.ts/signOutUser()]`);
+      console.log(`User signed out successfully [from: authApi.ts/signOutUser()]`);
     }
 
     
   } catch (error: any) {
     console.error(
-      `🚨 Error signing out user: ${error.message} [Source: authenticateApi.ts/signOutUser()]`,
+      `Error signing out user: ${error.message} [From: authApi.ts/signOutUser()]`,
     );
     throw error; // optional: allow UI to handle logout failures
   }
 };
 
-/**
- * Lag ny brukerkonto med e-post og passord
- * @returns Firebase userCredentials.user + userProfile
- */
+// Lag ny brukerkonto med e-post og passord
+// returnerer Firebase userCredentials.user + userProfile
 export const signUpUserWithEmail = async (
   email: string,
   password: string,
@@ -125,7 +117,7 @@ export const signUpUserWithEmail = async (
     return { authUser: userCredential.user, userProfile };
   } catch (error: any) {
     console.error(
-      `🚨 Error: ${error.code}, message: ${error.message} [Source: authApi.ts/signUpUserWithEmail()]`,
+      `Error: ${error.code}, message: ${error.message} [From: authApi.ts/signUpUserWithEmail()]`,
     );
     throw error; // rethrow so UI can handle it
   }

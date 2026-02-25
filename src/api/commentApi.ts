@@ -39,12 +39,12 @@ export const addComment = async (postId: string, comment: CommentData) => {
   });
   
   console.info(
-    `👍 Added comment with id "${commentRef.id}" to post "${postId}" [from commentAPI.ts/addComment]`,
+    `Added comment with id "${commentRef.id}" to post "${postId}" [from commentAPI.ts/addComment]`,
   );
 
   return commentRef.id;
   } catch (error) {
-    console.error(`🚨 Error adding comment: ${error}`);
+    console.error(`Error when adding a comment: ${error}`);
   }
 };
 
@@ -76,7 +76,7 @@ export const getCommentsByIds = async (ids: string[]) => {
     });
 
   } catch (error) {
-    console.error(`🚨 Error getting comments: ${error} [from commentAPI.ts/getCommentsByIds]`);
+    console.error(`Error when getting comments: ${error} [From commentAPI.ts/getCommentsByIds]`);
     return [];
   }
 };
@@ -92,6 +92,6 @@ export const deleteComment = async (commentId: string, postId: string) => {
 
     await deleteDoc(doc(db, 'comments', commentId));
   } catch (error) {
-    console.log(`🚨 Error deleting document: ${error} [from commentAPI.ts/deleteComment]`);
+    console.log(`Error deleting comment: ${error} [from commentAPI.ts/deleteComment]`);
   }
 };

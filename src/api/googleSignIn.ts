@@ -1,6 +1,11 @@
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { auth } from "firebaseConfig";
 
+/*
+/ Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Brukt med tillatelse.
+*/
+
 export async function signInWithGoogleCredential(idToken: string) {
   const credential = GoogleAuthProvider.credential(idToken);
   const userCredential = await signInWithCredential(auth, credential);

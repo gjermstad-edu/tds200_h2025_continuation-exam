@@ -12,7 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Device from "expo-device";
 
 /*
-/ Denne koden er delvis basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
 / Brukt med tillatelse.
 */
 

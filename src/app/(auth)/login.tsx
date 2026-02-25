@@ -310,7 +310,7 @@ export default function Page() {
                         );
 
                         console.error(
-                          `🚨 ERROR during authentication ${error?.message} [Source: login.tsx]`,
+                          `ERROR during authentication ${error?.message} [Source: login.tsx]`,
                         );
                       }
                     }}

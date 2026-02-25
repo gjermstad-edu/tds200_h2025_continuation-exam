@@ -49,10 +49,8 @@ const AuthContext = createContext<AuthContextType>({
   isProfileLoading: false,
 });
 
-/**
- * Gir tilgang på `useAuthContext` på alle sider som har tilgang på Context:
- * @returns useContext(AuthContext)
- */
+// Gir tilgang på `useAuthContext` på alle sider som har tilgang på Context:
+// returnerer `useContext(AuthContext)`
 export function useAuthContext() {
   const value = useContext(AuthContext);
   if (!value) {
@@ -64,9 +62,7 @@ export function useAuthContext() {
   return value;
 }
 
-/**
- * Gir `authContext` til children den wrappes rundt
- */
+// Gir `authContext` til children den wrappes rundt
 export function AuthSessionProvider({ children }: { children: ReactNode }) {
   // null = mangler
   // undefined = skal hentes fra Firebase
@@ -95,9 +91,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
         setIsAuthLoading(false);
       },
       (error) => {
-        console.error(
-          `🚨 ERROR error: ${error} [Source: authContext.tsx -> 1st useEffect]`,
-        );
+        console.error(`ERROR error: ${error} [From authContext.tsx]`);
         setIsAuthLoading(false);
       },
     );
@@ -162,7 +156,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
     };
 
     syncUserProfile().catch((error) =>
-      console.error("🚨 syncUserProfile error:", error),
+      console.error("ERROR from syncUserProfile:", error),
     );
   }, [firebaseUser?.uid]);
 

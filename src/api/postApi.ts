@@ -124,7 +124,7 @@ export const createPost = async (post: CreatePostInput) => {
   } catch (e) {
     displayErrorToast("Noe gikk galt under lagring av oppføringen", "Vennligst prøv igjen.")
     console.error(
-      `🚨 Error: Adding new post to Firestore failed: ${e} [from postApi.ts/createPost]`,
+      `Error: Adding new post to Firestore failed: ${e} [from postApi.ts/createPost]`,
     );
     return null;
   }
@@ -154,7 +154,7 @@ export const getAllPosts = async () => {
       } as PostData;
     });
   } catch (error) {
-    console.error("🚨 getAllPosts failed:", error);
+    console.error("ERROR getAllPosts failed:", error);
     return [];
   }
 };
@@ -179,9 +179,9 @@ export const deletePost = async (id: string) => {
   try {
     await deleteDoc(doc(db, COLLECTION_NAME, id));
 
-    console.log('👍 Post successfully deleted! [from postApi.ts/deletePost]');
+    console.log('Post successfully deleted! [from postApi.ts/deletePost]');
   } catch (e) {
-    console.error(`🚨 Error: Error removing document: ${e} [from postApi.ts/deletePost]`);
+    console.error(`Error: Error removing document: ${e} [from postApi.ts/deletePost]`);
   }
 };
 
@@ -195,7 +195,7 @@ export const updatePosts = async (posts: PostData[]) => {
     // setDoc + merge = “oppdater disse feltene”
     await setDoc(postRef, data, { merge: true });
 
-    console.log(`👍 Post ${postId} updated successfully!`);
+    console.log(`Post ${postId} updated successfully!`);
   });
 
   // Venter på alle async kall
@@ -212,10 +212,10 @@ export const updatePost = async (postId: string, updateData: Partial<PostData>) 
       updatedAt: serverTimestamp() as any,
     });
 
-    console.log(`👍 Post ${postId} updated successfully! [from postApi.ts/updatePost]`);
+    console.log(`Post ${postId} updated successfully! [from postApi.ts/updatePost]`);
   } catch (error) {
     console.error(
-      `🚨 Error:  Error updating post (postId: ${postId}): ${error} [from postApi.ts/updatePost]`,
+      `Error:  Error updating post (postId: ${postId}): ${error} [from postApi.ts/updatePost]`,
     );
   }
 };

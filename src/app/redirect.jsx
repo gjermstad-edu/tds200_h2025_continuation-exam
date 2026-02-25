@@ -1,13 +1,18 @@
 import * as WebBrowser from "expo-web-browser";
 WebBrowser.maybeCompleteAuthSession(); // must run first
-
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
+
 import { signInWithGoogleCredential } from "../api/googleSignIn";
+import { displaySuccessToast, displayErrorToast } from "@/components/ToastMessage";
 
-export default function RedirectHandler() {
 
-  
+/*
+/ Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
+/ Brukt med tillatelse.
+*/
+
+export default function RedirectHandler() {  
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const idToken = hashParams.get("id_token");
@@ -15,7 +20,7 @@ export default function RedirectHandler() {
     if (idToken) {
       signInWithGoogleCredential(idToken)
         .then(() => {
-          Toast.show({ type: "success", text1: "Google login success" });
+          displaySuccessToast("Google Sign-In godkjent")
 
           // Tell the main window that login succeeded
           if (window.opener) {
@@ -31,11 +36,7 @@ export default function RedirectHandler() {
         })
         .catch((err) => {
           console.error("Firebase sign-in failed:", err);
-          Toast.show({
-            type: "error",
-            text1: "Login failed",
-            text2: err.message,
-          });
+          displayErrorToast("Innlogging feilet", err?.message);
         });
     } else {
       console.warn("No id_token found in redirect URL.");
