@@ -63,7 +63,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
           `🚯 User decided NOT to delete post: ${postData.injuryLocation} / [${postData.statusIndicator}]`,
         );
       }
-    } else if (Platform.OS === "ios") {
+    } else {
       Alert.alert(
         `Slette oppføringen "${postData.injuryLocation}"?`,
         "Obs! Dette kan ikke angres!",
