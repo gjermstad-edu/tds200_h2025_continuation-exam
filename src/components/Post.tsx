@@ -96,7 +96,7 @@ export default function Post({ postData, refreshPosts }: PostProps) {
     <View className="mb-4 rounded-2xl bg-white">
       <View className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         {/* Innhold */}
-        <View className="flex-1 flex-row w-full items-center p-4">
+        <View className="flex-row w-full items-center p-4">
           {/* Klikkbart innhold (uten delete-knappen inni Link på web) */}
           <Link
             href={{
