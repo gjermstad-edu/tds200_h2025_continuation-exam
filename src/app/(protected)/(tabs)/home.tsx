@@ -23,8 +23,8 @@ export default function Index() {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [allPosts, setAllPosts] = useState<PostData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isWelcomeShowing, setIsWelcomeShowing] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [isShowFilters, setIsShowFilters] = useState(false);
   const [filterCategories, setFilterCategories] =
     useState<InjuryLocation | null>(null);
@@ -49,9 +49,12 @@ export default function Index() {
     if (!firebaseUser) return;
 
     const filteredPosts = await postApi.getRemoteFilteredPosts(category);
-    setAllPosts(filteredPosts);
-    setPosts(filteredPosts);
+    const sorted = sortPostsByDate(filteredPosts, sortOrder);
+
+    setAllPosts(sorted);
+    setPosts(sorted);
   };
+
   // 2.5) Tømmer søkefeltet om skade man filtrerer på endres
   useEffect(() => {
     setSearchQuery("");
@@ -59,9 +62,11 @@ export default function Index() {
 
   // Hook for å utføre søk på posts
   useEffect(() => {
+    const basePosts = allPosts;
+
+    // Om søkefeltet for fritekst er tomt, vis alle oppføringer
     if (!searchQuery.trim()) {
-      // If search bar is empty → show all posts
-      setPosts(allPosts);
+      setPosts(sortPostsByDate(basePosts, sortOrder));
       return;
     }
 
@@ -71,22 +76,26 @@ export default function Index() {
         p.injuryLocation.toLowerCase().includes(lowerQuery) ||
         (p.description && p.description.toLowerCase().includes(lowerQuery)),
     );
-    setPosts(locallyFiltered);
-  }, [searchQuery, allPosts]);
+    setPosts(sortPostsByDate(locallyFiltered, sortOrder));
+  }, [searchQuery, allPosts, sortOrder]);
 
-  // Fjerner melding på toppen etter 5 sec
-  useEffect(() => {
-    const timerId = setTimeout(removeWelcome, 5000);
-    return () => clearTimeout(timerId);
-  }, []);
-
-  // Små hjelpefunksjoner
-  function removeWelcome() {
-    setIsWelcomeShowing(false);
-  }
-
+  // HJELPEFUNKSJONER
   function toggleShowFilter() {
     setIsShowFilters(!isShowFilters);
+  }
+
+  function sortPostsByDate(
+    postsToSort: PostData[],
+    order: "newest" | "oldest",
+  ) {
+    const sorted = [...postsToSort].sort((postA, postB) => {
+      const timeA = postA.createdAt ? postA.createdAt.getTime() : 0;
+      const timeB = postB.createdAt ? postB.createdAt.getTime() : 0;
+
+      return order === "newest" ? timeB - timeA : timeA - timeB;
+    });
+
+    return sorted;
   }
 
   return (
@@ -102,13 +111,24 @@ export default function Index() {
       </View>
 
       {/* FILTRERING */}
-      <View className="w-full">
+      <View className="w-full flex-row px-4 gap-2">
         <Pressable
           onPress={toggleShowFilter}
-          className=" px-5 py-2 mx-4 rounded-lg items-center border-gray-200 bg-gray-50 border"
+          className="flex-1 px-4 py-2 rounded-lg items-center border border-gray-200 bg-gray-50"
         >
           <Text className="text-blue-700 font-semibold">
-            {isShowFilters ? "🔍 Skjul søk & filtrer" : "🔍 Søk & filtrer"}
+            {isShowFilters ? "🔍 Skjul" : "🔍 Søk & filtrer"}
+          </Text>
+        </Pressable>
+        {/* SORTERING */}
+        <Pressable
+          onPress={() =>
+            setSortOrder(sortOrder === "newest" ? "oldest" : "newest")
+          }
+          className="flex-1 px-4 py-2 rounded-lg items-center border border-gray-200 bg-gray-50"
+        >
+          <Text className="text-blue-700 font-semibold">
+            {sortOrder === "newest" ? "🕒 Nyeste først" : "🕒 Eldste først"}
           </Text>
         </Pressable>
       </View>
@@ -177,6 +197,14 @@ export default function Index() {
           </Picker>
         </View>
       )}
+      <View className="w-full px-6 mt-2 mb-1 flex-row justify-between">
+        <Text className="text-xs text-gray-500">
+          {posts.length} oppføringer
+        </Text>
+        <Text className="text-xs text-gray-500">
+          Viser: {sortOrder === "newest" ? "Nyeste først" : "Eldste først"}
+        </Text>
+      </View>
 
       {/* Flatlist shows list of posts with like functionality
       It renders Post component for each post */}
