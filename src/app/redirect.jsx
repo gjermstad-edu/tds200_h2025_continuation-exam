@@ -1,11 +1,9 @@
 import * as WebBrowser from "expo-web-browser";
 WebBrowser.maybeCompleteAuthSession(); // must run first
 import { useEffect } from "react";
-import Toast from "react-native-toast-message";
 
 import { signInWithGoogleCredential } from "../api/googleSignIn";
 import { displaySuccessToast, displayErrorToast } from "@/components/ToastMessage";
-
 
 /*
 / Denne koden er basert på kodebasene fra forelesninger i faget TDS200 ved Høyskolen Kristiania høsten 2025.
