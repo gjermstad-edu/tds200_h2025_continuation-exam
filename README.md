@@ -40,6 +40,9 @@ Appen (**RehabTrace**) lar brukeren registrere skadeobservasjoner over tid og f�
 - Mulighet for å slette både oppføringer og notater med bekreftelse.
 - Sentralisert toast-system for konsistente tilbakemeldinger i UI.
 
+<img width="3420" height="1898" alt="Skjermbilde 2026-02-26 kl  08 40 39" src="https://github.com/user-attachments/assets/46ceb2c2-33b9-4bde-9807-4e6518a1f11c" />
+
+
 ---
 
 ## Søk og filtrering (AND-logikk)
